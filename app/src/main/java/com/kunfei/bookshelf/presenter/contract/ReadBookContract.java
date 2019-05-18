@@ -1,6 +1,7 @@
 package com.kunfei.bookshelf.presenter.contract;
 
 import android.app.Activity;
+import android.content.Intent;
 
 import com.kunfei.basemvplib.impl.IPresenter;
 import com.kunfei.basemvplib.impl.IView;
@@ -55,7 +56,7 @@ public interface ReadBookContract {
 
     interface Presenter extends IPresenter {
 
-        int getOpen_from();
+        void loadBook(Intent intent);
 
         BookShelfBean getBookShelf();
 

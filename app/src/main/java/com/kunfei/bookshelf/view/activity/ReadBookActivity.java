@@ -37,9 +37,9 @@ import com.kunfei.bookshelf.DbHelper;
 import com.kunfei.bookshelf.MApplication;
 import com.kunfei.bookshelf.R;
 import com.kunfei.bookshelf.base.MBaseActivity;
+import com.kunfei.bookshelf.bean.BookChapterBean;
 import com.kunfei.bookshelf.bean.BookShelfBean;
 import com.kunfei.bookshelf.bean.BookmarkBean;
-import com.kunfei.bookshelf.bean.ChapterListBean;
 import com.kunfei.bookshelf.bean.TxtChapterRuleBean;
 import com.kunfei.bookshelf.constant.RxBusTag;
 import com.kunfei.bookshelf.dao.TxtChapterRuleBeanDao;
@@ -146,7 +146,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private ThisBatInfoReceiver batInfoReceiver;
     private ReadBookControl readBookControl = ReadBookControl.getInstance();
 
-    private Boolean showCheckPermission = false;
     private boolean autoPage = false;
     private boolean aloudNextPage;
 
@@ -763,7 +762,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                      * @param chapters：返回章节目录
                      */
                     @Override
-                    public void onCategoryFinish(List<ChapterListBean> chapters) {
+                    public void onCategoryFinish(List<BookChapterBean> chapters) {
                         mPresenter.getBookShelf().getBookInfoBean().setChapterList(chapters);
                         mPresenter.getBookShelf().setChapterListSize(chapters.size());
                         mPresenter.saveBook();
@@ -1560,10 +1559,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             if (!mPageLoader.updateBattery(BatteryUtil.getLevel(this))) {
                 mPageLoader.updateTime();
             }
-        }
-        if (showCheckPermission && mPresenter.getOpen_from() == ReadBookPresenter.OPEN_FROM_OTHER && PermissionUtils.checkMorePermissions(this, MApplication.PerList).isEmpty()) {
-            showCheckPermission = true;
-            mPresenter.openBookFromOther(this);
         }
     }
 

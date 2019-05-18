@@ -22,10 +22,10 @@ import com.kunfei.basemvplib.BitIntentDataManager;
 import com.kunfei.basemvplib.impl.IView;
 import com.kunfei.bookshelf.DbHelper;
 import com.kunfei.bookshelf.base.observer.MyObserver;
+import com.kunfei.bookshelf.bean.BookChapterBean;
 import com.kunfei.bookshelf.bean.BookShelfBean;
 import com.kunfei.bookshelf.bean.BookSourceBean;
 import com.kunfei.bookshelf.bean.BookmarkBean;
-import com.kunfei.bookshelf.bean.ChapterListBean;
 import com.kunfei.bookshelf.bean.DownloadBookBean;
 import com.kunfei.bookshelf.bean.LocBookShelfBean;
 import com.kunfei.bookshelf.bean.OpenChapterBean;
@@ -52,7 +52,6 @@ public class ReadBookPresenter extends BasePresenterImpl<ReadBookContract.View> 
     public final static int OPEN_FROM_OTHER = 0;
     public final static int OPEN_FROM_APP = 1;
 
-    private int open_from;
     private BookShelfBean bookShelf;
     private BookSourceBean bookSourceBean;
     private ChangeSourceHelp changeSourceHelp;
@@ -60,7 +59,7 @@ public class ReadBookPresenter extends BasePresenterImpl<ReadBookContract.View> 
     @Override
     public void initData(Activity activity) {
         Intent intent = activity.getIntent();
-        open_from = intent.getData() != null ? OPEN_FROM_OTHER : OPEN_FROM_APP;
+        int open_from = intent.getData() != null ? OPEN_FROM_OTHER : OPEN_FROM_APP;
         open_from = intent.getIntExtra("openFrom", open_from);
         if (open_from == OPEN_FROM_APP) {
             loadBook(intent);
@@ -70,7 +69,8 @@ public class ReadBookPresenter extends BasePresenterImpl<ReadBookContract.View> 
         }
     }
 
-    private void loadBook(Intent intent) {
+    @Override
+    public void loadBook(Intent intent) {
         Observable.create((ObservableOnSubscribe<BookShelfBean>) e -> {
             if (bookShelf == null) {
                 String key = intent.getStringExtra("data_key");
@@ -85,13 +85,15 @@ public class ReadBookPresenter extends BasePresenterImpl<ReadBookContract.View> 
                     bookShelf = beans.get(0);
                 }
             }
-            if (bookShelf != null) {
+            if (bookShelf != null && bookShelf.realChapterListEmpty()) {
                 bookShelf.getBookInfoBean().setChapterList(BookshelfHelp.getChapterList(bookShelf.getNoteUrl()));
                 bookShelf.getBookInfoBean().setBookmarkList(BookshelfHelp.getBookmarkList(bookShelf.getBookInfoBean().getName()));
+            }
+            if (bookShelf != null && !bookShelf.getTag().equals(BookShelfBean.LOCAL_TAG) && bookSourceBean == null) {
+                bookSourceBean = BookSourceManager.getBookSourceByUrl(bookShelf.getTag());
+            }
+            if (bookShelf != null) {
                 mView.setAdd(BookshelfHelp.isInBookShelf(bookShelf.getNoteUrl()));
-                if (!bookShelf.getTag().equals(BookShelfBean.LOCAL_TAG)) {
-                    bookSourceBean = BookSourceManager.getBookSourceByUrl(bookShelf.getTag());
-                }
             }
             e.onNext(bookShelf);
             e.onComplete();
@@ -314,11 +316,6 @@ public class ReadBookPresenter extends BasePresenterImpl<ReadBookContract.View> 
     }
 
     @Override
-    public int getOpen_from() {
-        return open_from;
-    }
-
-    @Override
     public BookShelfBean getBookShelf() {
         return bookShelf;
     }
@@ -461,9 +458,9 @@ public class ReadBookPresenter extends BasePresenterImpl<ReadBookContract.View> 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.AUDIO_SIZE)})
     public void upAudioSize(Integer audioSize) {
         mView.upAudioSize(audioSize);
-        ChapterListBean bean = bookShelf.getChapter(bookShelf.getDurChapter());
+        BookChapterBean bean = bookShelf.getChapter(bookShelf.getDurChapter());
         bean.setEnd(Long.valueOf(audioSize));
-        DbHelper.getDaoSession().getChapterListBeanDao().insertOrReplace(bean);
+        DbHelper.getDaoSession().getBookChapterBeanDao().insertOrReplace(bean);
     }
 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.AUDIO_DUR)})
