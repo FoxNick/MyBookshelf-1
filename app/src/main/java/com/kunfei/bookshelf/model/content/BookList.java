@@ -104,7 +104,7 @@ class BookList {
                         if (allInOne) {
                             for (int i = 0; i < collections.size(); i++) {
                                 Object object = collections.get(i);
-                                SearchBookBean item = getItemAllInOne(object, baseUrl, i == 0);
+                                SearchBookBean item = getItemAllInOne(analyzer, object, baseUrl, i == 0);
                                 if (item != null) {
                                     //如果网址相同则缓存
                                     if (baseUrl.equals(item.getNoteUrl())) {
@@ -181,7 +181,7 @@ class BookList {
             item.setAuthor(analyzer.getString(bookSourceBean.getRuleBookAuthor()));
             Debug.printLog(tag, "└" + item.getAuthor());
             Debug.printLog(tag, "┌获取封面");
-            item.setCoverUrl(analyzer.getString(bookSourceBean.getRuleCoverUrl()));
+            item.setCoverUrl(analyzer.getString(bookSourceBean.getRuleCoverUrl(), true));
             Debug.printLog(tag, "└" + item.getCoverUrl());
             Debug.printLog(tag, "┌获取分类");
             item.setKind(StringUtils.join(",", analyzer.getStringList(bookSourceBean.getRuleBookKind())));
@@ -197,8 +197,9 @@ class BookList {
         return null;
     }
 
-    private SearchBookBean getItemAllInOne(Object object, String baseUrl, boolean printLog) {
+    private SearchBookBean getItemAllInOne(AnalyzeRule analyzer, Object object, String baseUrl, boolean printLog) {
         SearchBookBean item = new SearchBookBean();
+        analyzer.setBook(item);
         NativeObject nativeObject = (NativeObject) object;
         Debug.printLog(tag, "┌获取书名", printLog);
         String bookName = String.valueOf(nativeObject.get(ruleName));
@@ -220,7 +221,7 @@ class BookList {
             item.setIntroduce(String.valueOf(nativeObject.get(ruleIntroduce)));
             Debug.printLog(tag, "└" + item.getIntroduce(), printLog, true);
             Debug.printLog(tag, "┌获取封面", printLog);
-            item.setCoverUrl(String.valueOf(nativeObject.get(ruleCoverUrl)));
+            item.setCoverUrl(NetworkUtils.getAbsoluteURL(baseUrl, String.valueOf(nativeObject.get(ruleCoverUrl))));
             Debug.printLog(tag, "└" + item.getCoverUrl(), printLog);
             Debug.printLog(tag, "┌获取书籍网址", printLog);
             String resultUrl = String.valueOf(nativeObject.get(ruleNoteUrl));
@@ -335,7 +336,7 @@ class BookList {
                         infoList[2], // 保存分类
                         infoList[3], // 保存终章
                         infoList[4], // 保存简介
-                        infoList[5], // 保存封面
+                        NetworkUtils.getAbsoluteURL(baseUrl, infoList[5]), // 保存封面
                         infoList[6]  // 保存详情
                 );
                 books.add(item);
@@ -423,5 +424,5 @@ class BookList {
         }
         return r;
     }
-
+    // endregion
 }

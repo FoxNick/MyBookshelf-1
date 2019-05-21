@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.PorterDuff;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
@@ -358,6 +357,14 @@ public class MainActivity extends BaseTabActivity<MainContract.Presenter> implem
         return mVp;
     }
 
+    public BookListFragment getBookListFragment() {
+        try {
+            return (BookListFragment) mFragmentList.get(0);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public FindBookFragment getFindFragment() {
         try {
             return (FindBookFragment) mFragmentList.get(1);
@@ -439,6 +446,11 @@ public class MainActivity extends BaseTabActivity<MainContract.Presenter> implem
                 editor.putBoolean("bookshelfIsList", !viewIsList);
                 editor.apply();
                 recreate();
+                break;
+            case R.id.action_arrange_bookshelf:
+                if (getBookListFragment() != null) {
+                    getBookListFragment().setArrange(true);
+                }
                 break;
             case R.id.action_web_start:
                 WebService.startThis(this);
@@ -640,7 +652,6 @@ public class MainActivity extends BaseTabActivity<MainContract.Presenter> implem
     protected void firstRequest() {
         if (!isRecreate) {
             versionUpRun();
-            handler.postDelayed(this::preloadReader, 200);
         }
         if (!Objects.equals(MApplication.downloadPath, FileHelp.getFilesPath())) {
             requestPermission();
@@ -766,12 +777,6 @@ public class MainActivity extends BaseTabActivity<MainContract.Presenter> implem
                 }
             }
         }
-    }
-
-    private void preloadReader() {
-        AsyncTask.execute(() -> {
-
-        });
     }
 
 }
