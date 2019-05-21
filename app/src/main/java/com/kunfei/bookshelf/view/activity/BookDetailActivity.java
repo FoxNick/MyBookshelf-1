@@ -218,13 +218,13 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     }
 
     @Override
-    public void getBookShelfError(boolean refresh) {
+    public void getBookShelfError() {
         tvLoading.setVisibility(View.VISIBLE);
         tvLoading.setText(R.string.load_error_retry);
         tvLoading.setOnClickListener(v -> {
             tvLoading.setText(R.string.loading);
             tvLoading.setOnClickListener(null);
-            mPresenter.loadBookShelfInfo(refresh);
+            mPresenter.getBookShelfInfo();
         });
     }
 
@@ -263,7 +263,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         tvLoading.setOnClickListener(null);
         mPresenter.getBookShelf().getBookInfoBean().setBookInfoHtml(null);
         mPresenter.getBookShelf().getBookInfoBean().setChapterListHtml(null);
-        mPresenter.loadBookShelfInfo(true);
+        mPresenter.getBookShelfInfo();
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -283,7 +283,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                                 mPresenter.changeBookSource(searchBookBean);
                             } else {
                                 mPresenter.initBookFormSearch(searchBookBean);
-                                mPresenter.loadBookShelfInfo(true);
+                                mPresenter.getBookShelfInfo();
                             }
                         }).show());
 
@@ -386,7 +386,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         super.firstRequest();
         if (mPresenter.getOpenFrom() == BookDetailPresenter.FROM_SEARCH) {
             //网络请求
-            mPresenter.loadBookShelfInfo(false);
+            mPresenter.getBookShelfInfo();
         }
     }
 

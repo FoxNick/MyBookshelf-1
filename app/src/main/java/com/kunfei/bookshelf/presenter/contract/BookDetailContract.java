@@ -20,12 +20,13 @@ public interface BookDetailContract {
 
         BookShelfBean getBookShelf();
 
+        List<BookChapterBean> getChapterList();
 
         Boolean getInBookShelf();
 
         void initBookFormSearch(SearchBookBean searchBookBean);
 
-        void loadBookShelfInfo(boolean refresh);
+        void getBookShelfInfo();
 
         void addToBookShelf();
 
@@ -43,7 +44,7 @@ public interface BookDetailContract {
         /**
          * 数据获取失败
          */
-        void getBookShelfError(boolean refresh);
+        void getBookShelfError();
 
         void finish();
 

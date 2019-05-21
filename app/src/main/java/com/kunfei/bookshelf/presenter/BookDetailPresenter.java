@@ -31,12 +31,9 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 public class BookDetailPresenter extends BasePresenterImpl<BookDetailContract.View> implements BookDetailContract.Presenter {
     public final static int FROM_BOOKSHELF = 1;
@@ -84,66 +81,39 @@ public class BookDetailPresenter extends BasePresenterImpl<BookDetailContract.Vi
         bookShelf = BookshelfHelp.getBookFromSearchBook(searchBookBean);
     }
 
+    @Override
     public Boolean getInBookShelf() {
         return inBookShelf;
     }
 
+    @Override
     public int getOpenFrom() {
         return openFrom;
     }
 
+    @Override
     public SearchBookBean getSearchBook() {
         return searchBook;
     }
 
+    @Override
     public BookShelfBean getBookShelf() {
         return bookShelf;
     }
 
+    @Override
+    public List<BookChapterBean> getChapterList() {
+        return chapterBeanList;
+    }
 
     @Override
-    public void loadBookShelfInfo(boolean refresh) {
-        Observable.create((ObservableOnSubscribe<BookShelfBean>) e -> {
-            BookShelfBean bookShelfBean;
-            if (openFrom == FROM_BOOKSHELF) {
-                bookShelfBean = BookshelfHelp.getBook(bookShelf.getNoteUrl());
-            } else {//来自搜索页面
-                bookShelfBean = BookshelfHelp.getBook(searchBook.getNoteUrl());
-                //bookShelfBean = bookShelf;
-            }
-
-            if (bookShelfBean != null) {
-                inBookShelf = true;
-                bookShelf = bookShelfBean;
-            }
-            e.onNext(bookShelf);
-            e.onComplete();
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(bookShelfBean -> {
-                    bookShelf = bookShelfBean;
-                    mView.updateView();//false
-                })
-                .observeOn(Schedulers.io())
-                .flatMap(bookShelfBean -> WebBookModel.getInstance().getBookInfo(bookShelfBean))
-                .flatMap(bookShelfBean -> {
-                    if (refresh && inBookShelf) {
-                        return WebBookModel.getInstance().getChapterList(bookShelfBean);
-                    }
-                    return Observable.just(bookShelfBean);
-                })
-                .doAfterNext(bookShelfBean -> {
-                    if (inBookShelf) {
-                        Schedulers.single().createWorker().schedule(() -> {
-                            BookshelfHelp.saveBookToShelf(bookShelfBean);
-                            RxBus.get().post("update_book_progress", bookShelfBean);
-                        });
-                    }
-                })
+    public void getBookShelfInfo() {
+        if (BookShelfBean.LOCAL_TAG.equals(bookShelf.getTag())) return;
+        WebBookModel.getInstance().getBookInfo(bookShelf)
+                .flatMap(bookShelfBean -> WebBookModel.getInstance().getChapterList(bookShelfBean))
+                .compose(RxUtils::toSimpleSingle)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new MyObserver<List<BookChapterBean>>() {
-
                     @Override
                     public void onSubscribe(Disposable d) {
                         compositeDisposable.add(d);
@@ -151,20 +121,15 @@ public class BookDetailPresenter extends BasePresenterImpl<BookDetailContract.Vi
 
                     @Override
                     public void onNext(List<BookChapterBean> bookChapterBeans) {
-
-                    }
-
-                    @Override
-                    public void onNext(BookShelfBean bookShelfResult) {
-                        bookShelf = bookShelfResult;
-                        mView.updateView();//true
+                        chapterBeanList = bookChapterBeans;
+                        mView.updateView();
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
                         mView.toast(e.getLocalizedMessage());
-                        mView.getBookShelfError(refresh);
+                        mView.getBookShelfError();
                     }
                 });
     }
@@ -179,7 +144,7 @@ public class BookDetailPresenter extends BasePresenterImpl<BookDetailContract.Vi
                 e.onNext(true);
                 e.onComplete();
             }).compose(RxUtils::toSimpleSingle)
-                    .subscribe(new Observer<Boolean>() {
+                    .subscribe(new MyObserver<Boolean>() {
                         @Override
                         public void onSubscribe(Disposable d) {
                             compositeDisposable.add(d);
@@ -200,11 +165,6 @@ public class BookDetailPresenter extends BasePresenterImpl<BookDetailContract.Vi
                             e.printStackTrace();
                             mView.toast("放入书架失败!");
                         }
-
-                        @Override
-                        public void onComplete() {
-
-                        }
                     });
         }
     }
@@ -219,7 +179,7 @@ public class BookDetailPresenter extends BasePresenterImpl<BookDetailContract.Vi
                 e.onNext(true);
                 e.onComplete();
             }).compose(RxUtils::toSimpleSingle)
-                    .subscribe(new Observer<Boolean>() {
+                    .subscribe(new MyObserver<Boolean>() {
                         @Override
                         public void onSubscribe(Disposable d) {
                             compositeDisposable.add(d);
@@ -239,11 +199,6 @@ public class BookDetailPresenter extends BasePresenterImpl<BookDetailContract.Vi
                         public void onError(Throwable e) {
                             e.printStackTrace();
                             mView.toast("删除书籍失败！");
-                        }
-
-                        @Override
-                        public void onComplete() {
-
                         }
                     });
         }
