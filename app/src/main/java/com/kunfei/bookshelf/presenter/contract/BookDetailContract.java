@@ -20,7 +20,6 @@ public interface BookDetailContract {
 
         BookShelfBean getBookShelf();
 
-        List<BookChapterBean> getChapterList();
 
         Boolean getInBookShelf();
 
