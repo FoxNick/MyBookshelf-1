@@ -354,10 +354,6 @@ public class MainActivity extends BaseTabActivity<MainContract.Presenter> implem
         return tabView;
     }
 
-    public TabLayout getTabLayout() {
-        return mTlIndicator;
-    }
-
     public ViewPager getViewPager() {
         return mVp;
     }
@@ -579,8 +575,7 @@ public class MainActivity extends BaseTabActivity<MainContract.Presenter> implem
                         .setTitle(R.string.backup_confirmation)
                         .setMessage(R.string.backup_message)
                         .setPositiveButton(R.string.ok, (dialog, which) -> mPresenter.backupData())
-                        .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
-                        })
+                        .setNegativeButton(R.string.cancel, null)
                         .show();
                 ATH.setAlertDialogTint(alertDialog);
             }
@@ -609,8 +604,7 @@ public class MainActivity extends BaseTabActivity<MainContract.Presenter> implem
                         .setTitle(R.string.restore_confirmation)
                         .setMessage(R.string.restore_message)
                         .setPositiveButton(R.string.ok, (dialog, which) -> mPresenter.restoreData())
-                        .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
-                        })
+                        .setNegativeButton(R.string.cancel, null)
                         .show();
                 ATH.setAlertDialogTint(alertDialog);
             }
