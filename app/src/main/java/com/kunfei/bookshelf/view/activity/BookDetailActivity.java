@@ -144,7 +144,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             tvRead.setOnClickListener(v -> {
                 //放入书架
             });
-            tvIntro.setVisibility(View.INVISIBLE);
+            tvIntro.setVisibility(View.VISIBLE);
             tvLoading.setVisibility(View.VISIBLE);
             tvLoading.setText(R.string.loading);
             tvLoading.setOnClickListener(null);
