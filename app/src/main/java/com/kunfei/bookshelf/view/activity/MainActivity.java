@@ -29,7 +29,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -174,8 +173,19 @@ public class MainActivity extends BaseTabActivity<MainContract.Presenter> implem
 
     @Override
     protected List<Fragment> createTabFragments() {
-        BookListFragment bookListFragment = new BookListFragment();
-        FindBookFragment findBookFragment = new FindBookFragment();
+        BookListFragment bookListFragment = null;
+        FindBookFragment findBookFragment = null;
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment instanceof BookListFragment) {
+                bookListFragment = (BookListFragment) fragment;
+            } else if (fragment instanceof FindBookFragment) {
+                findBookFragment = (FindBookFragment) fragment;
+            }
+        }
+        if (bookListFragment == null)
+            bookListFragment = new BookListFragment();
+        if (findBookFragment == null)
+            findBookFragment = new FindBookFragment();
         return Arrays.asList(bookListFragment, findBookFragment);
     }
 
@@ -509,10 +519,13 @@ public class MainActivity extends BaseTabActivity<MainContract.Presenter> implem
      * 侧边栏按钮
      */
     private void setUpNavigationView() {
+        navigationView.setBackgroundColor(ThemeStore.backgroundColor(this));
         NavigationViewUtil.setItemTextColors(navigationView, getResources().getColor(R.color.tv_text_default), ThemeStore.accentColor(this));
         NavigationViewUtil.setItemIconColors(navigationView, getResources().getColor(R.color.tv_text_default), ThemeStore.accentColor(this));
         NavigationViewUtil.disableScrollbar(navigationView);
         @SuppressLint("InflateParams") View headerView = LayoutInflater.from(this).inflate(R.layout.navigation_header, null);
+        AppCompatImageView imageView = headerView.findViewById(R.id.iv_read);
+        imageView.setColorFilter(ThemeStore.accentColor(this));
         navigationView.addHeaderView(headerView);
         Menu drawerMenu = navigationView.getMenu();
         vwNightTheme = drawerMenu.findItem(R.id.action_theme).getActionView().findViewById(R.id.iv_theme_day_night);
@@ -759,14 +772,6 @@ public class MainActivity extends BaseTabActivity<MainContract.Presenter> implem
 
     @Override
     public void recreate() {
-        try {//避免重启太快恢复
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            for (Fragment fragment : mFragmentList) {
-                fragmentTransaction.remove(fragment);
-            }
-            fragmentTransaction.commitAllowingStateLoss();
-        } catch (Exception ignored) {
-        }
         super.recreate();
     }
 
