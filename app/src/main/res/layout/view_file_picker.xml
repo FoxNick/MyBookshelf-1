@@ -5,27 +5,31 @@
     android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_file"
+        android:id="@+id/rv_path"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <TextView
-        android:id="@+id/tv_empty"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:visibility="gone" />
+        android:layout_height="30dp" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.2dp"
         android:background="@color/btn_bg_press_2" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_path"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp" />
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_file"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/tv_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:visibility="gone" />
+
+    </FrameLayout>
 
 </LinearLayout>

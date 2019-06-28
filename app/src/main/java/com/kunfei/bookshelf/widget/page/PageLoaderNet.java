@@ -189,7 +189,7 @@ public class PageLoaderNet extends PageLoader {
     @SuppressLint("DefaultLocale")
     @Override
     protected boolean noChapterData(BookChapterBean chapter) {
-        return !BookshelfHelp.isChapterCached(book.getBookInfoBean().getName(), book.getTag(), chapter, book.getBookInfoBean().isAudio());
+        return !BookshelfHelp.isChapterCached(book.getBookInfoBean().getName(), book.getTag(), chapter, book.isAudio());
     }
 
     private boolean shouldRequestChapter(Integer chapterIndex) {
