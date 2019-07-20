@@ -1,5 +1,6 @@
 package com.kunfei.bookshelf.model.content;
 
+import android.os.Build;
 import android.text.TextUtils;
 
 import com.kunfei.bookshelf.MApplication;
@@ -9,6 +10,7 @@ import com.kunfei.bookshelf.bean.BookChapterBean;
 import com.kunfei.bookshelf.bean.BookShelfBean;
 import com.kunfei.bookshelf.bean.BookSourceBean;
 import com.kunfei.bookshelf.bean.WebChapterBean;
+import com.kunfei.bookshelf.model.analyzeRule.AnalyzeByRegex;
 import com.kunfei.bookshelf.model.analyzeRule.AnalyzeRule;
 import com.kunfei.bookshelf.model.analyzeRule.AnalyzeUrl;
 import com.kunfei.bookshelf.model.task.AnalyzeNextUrlTask;
@@ -179,7 +181,7 @@ public class BookChapterList {
         // 仅使用java正则表达式提取目录列表
         if (ruleChapterList.startsWith(":")) {
             ruleChapterList = ruleChapterList.substring(1);
-            chapterBeans = regexChapter(s, ruleChapterList.split("&&"), 0, analyzer);
+            regexChapter(s, ruleChapterList.split("&&"), 0, analyzer, chapterBeans);
             if (chapterBeans.size() == 0) {
                 Debug.printLog(tag, "└找到 0 个章节", printLog);
                 return new WebChapterBean(chapterBeans, new LinkedHashSet<>(nextUrlList));
@@ -238,47 +240,105 @@ public class BookChapterList {
     }
 
     // region 纯java模式正则表达式获取目录列表
-    private List<BookChapterBean> regexChapter(String str, String[] regex, int index, AnalyzeRule analyzer) {
-        Matcher m = Pattern.compile(regex[index]).matcher(str);
+    private void regexChapter(String str, String[] regex, int index, AnalyzeRule analyzer, final List<BookChapterBean> chapterBeans) {
+        Matcher resM = Pattern.compile(regex[index]).matcher(str);
+        if (!resM.find()) {
+            return;
+        }
         if (index + 1 == regex.length) {
-            int vipGroup = 0, nameGroup = 0, linkGroup = 0;
-            String baseUrl = "";
-            List<BookChapterBean> chapterBeans = new ArrayList<>();
-            String nameRule = bookSourceBean.getRuleChapterName();
-            String linkRule = bookSourceBean.getRuleContentUrl();
-            // 分离标题正则参数
-            Matcher nameMatcher = Pattern.compile("((?<=\\$)\\d)?\\$(\\d$)").matcher(nameRule);
-            while (nameMatcher.find()) {
-                vipGroup = nameMatcher.group(1) == null ? 0 : Integer.parseInt(nameMatcher.group(1));
-                nameGroup = Integer.parseInt(nameMatcher.group(2));
-            }
-            // 分离网址正则参数
-            Matcher linkMatcher = Pattern.compile("(.*?)\\$(\\d$)").matcher(linkRule);
-            while (linkMatcher.find()) {
-                baseUrl = analyzer.replaceGet(linkMatcher.group(1));
-                linkGroup = Integer.parseInt(linkMatcher.group(2));
-            }
-            // 提取目录列表信息
-            if (vipGroup == 0) {
-                while (m.find()) {
-                    addChapter(chapterBeans,
-                            m.group(nameGroup),
-                            baseUrl + m.group(linkGroup)
-                    );
+            // 获取解析规则
+            String nameRule = analyzer.replaceGet(bookSourceBean.getRuleChapterName());
+            String linkRule = analyzer.replaceGet(bookSourceBean.getRuleContentUrl());
+            // 分离规则参数
+            List<String> nameParams = new ArrayList<>();
+            List<Integer> nameGroups = new ArrayList<>();
+            AnalyzeByRegex.splitRegexRule(nameRule, nameParams, nameGroups);
+            List<String> linkParams = new ArrayList<>();
+            List<Integer> linkGroups = new ArrayList<>();
+            AnalyzeByRegex.splitRegexRule(linkRule, linkParams, linkGroups);
+            // 是否包含VIP规则(hasVipRule>1 时视为包含vip规则)
+            int hasVipRule = 0;
+            for (int i = nameGroups.size(); i-- > 0; ) {
+                if (nameGroups.get(i) != 0) {
+                    ++hasVipRule;
                 }
+            }
+            String vipNameGroup = "";
+            int vipNumGroup = 0;
+            if ((nameGroups.get(0) != 0) && (hasVipRule > 1)) {
+                vipNumGroup = nameGroups.remove(0);
+                vipNameGroup = nameParams.remove(0);
+            }
+            // 创建结果缓存
+            StringBuilder cName = new StringBuilder();
+            StringBuilder cLink = new StringBuilder();
+            // 提取书籍目录
+            if (vipNumGroup != 0) {
+                do {
+                    cName.setLength(0);
+                    cLink.setLength(0);
+                    for (int i = nameParams.size(); i-- > 0; ) {
+                        if (nameGroups.get(i) > 0) {
+                            cName.insert(0, resM.group(nameGroups.get(i)));
+                        } else if (nameGroups.get(i) < 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            cName.insert(0, resM.group(nameParams.get(i)));
+                        } else {
+                            cName.insert(0, nameParams.get(i));
+                        }
+                    }
+                    if (vipNumGroup > 0) {
+                        cName.insert(0, resM.group(vipNumGroup) == null ? "" : "\uD83D\uDD12");
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        cName.insert(0, resM.group(vipNameGroup) == null ? "" : "\uD83D\uDD12");
+                    } else {
+                        cName.insert(0, vipNameGroup);
+                    }
+
+                    for (int i = linkParams.size(); i-- > 0; ) {
+                        if (linkGroups.get(i) > 0) {
+                            cLink.insert(0, resM.group(linkGroups.get(i)));
+                        } else if (linkGroups.get(i) < 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            cLink.insert(0, resM.group(linkParams.get(i)));
+                        } else {
+                            cLink.insert(0, linkParams.get(i));
+                        }
+                    }
+
+                    addChapter(chapterBeans, cName.toString(), cLink.toString());
+                } while (resM.find());
             } else {
-                while (m.find()) {
-                    addChapter(chapterBeans,
-                            (m.group(vipGroup) == null ? "" : "\uD83D\uDD12") + m.group(nameGroup),
-                            baseUrl + m.group(linkGroup)
-                    );
-                }
+                do {
+                    cName.setLength(0);
+                    cLink.setLength(0);
+                    for (int i = nameParams.size(); i-- > 0; ) {
+                        if (nameGroups.get(i) > 0) {
+                            cName.insert(0, resM.group(nameGroups.get(i)));
+                        } else if (nameGroups.get(i) < 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            cName.insert(0, resM.group(nameParams.get(i)));
+                        } else {
+                            cName.insert(0, nameParams.get(i));
+                        }
+                    }
+
+                    for (int i = linkParams.size(); i-- > 0; ) {
+                        if (linkGroups.get(i) > 0) {
+                            cLink.insert(0, resM.group(linkGroups.get(i)));
+                        } else if (linkGroups.get(i) < 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            cLink.insert(0, resM.group(linkParams.get(i)));
+                        } else {
+                            cLink.insert(0, linkParams.get(i));
+                        }
+                    }
+
+                    addChapter(chapterBeans, cName.toString(), cLink.toString());
+                } while (resM.find());
             }
-            return chapterBeans;
         } else {
             StringBuilder result = new StringBuilder();
-            while (m.find()) result.append(m.group());
-            return regexChapter(result.toString(), regex, ++index, analyzer);
+            do {
+                result.append(resM.group(0));
+            } while (resM.find());
+            regexChapter(result.toString(), regex, ++index, analyzer, chapterBeans);
         }
     }
     // endregion
