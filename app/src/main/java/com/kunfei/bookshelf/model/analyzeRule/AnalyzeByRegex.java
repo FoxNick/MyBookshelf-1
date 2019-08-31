@@ -1,6 +1,7 @@
 package com.kunfei.bookshelf.model.analyzeRule;
 
 import android.os.Build;
+import android.text.TextUtils;
 
 import com.kunfei.bookshelf.bean.BookInfoBean;
 import com.kunfei.bookshelf.bean.BookShelfBean;
@@ -11,6 +12,7 @@ import com.kunfei.bookshelf.utils.NetworkUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,7 +22,7 @@ public class AnalyzeByRegex {
 
     // 纯java模式正则表达式获取书籍详情信息
     public static void getInfoOfRegex(String res, String[] regs, int index,
-                                      BookShelfBean bookShelfBean, AnalyzeRule analyzer, BookSourceBean bookSourceBean, String tag) {
+                                      BookShelfBean bookShelfBean, AnalyzeRule analyzer, BookSourceBean bookSourceBean, String tag) throws Exception {
         Matcher resM = Pattern.compile(regs[index]).matcher(res);
         String baseUrl = bookShelfBean.getNoteUrl();
         // 创建详情信息存储容器
@@ -41,7 +43,7 @@ public class AnalyzeByRegex {
             ruleMap.put("BookName", bookSourceBean.getRuleBookName());
             ruleMap.put("BookAuthor", bookSourceBean.getRuleBookAuthor());
             ruleMap.put("BookKind", bookSourceBean.getRuleBookKind());
-            ruleMap.put("BookLastChapter", bookSourceBean.getRuleBookLastChapter());
+            ruleMap.put("LastChapter", bookSourceBean.getRuleBookLastChapter());
             ruleMap.put("Introduce", bookSourceBean.getRuleIntroduce());
             ruleMap.put("CoverUrl", bookSourceBean.getRuleCoverUrl());
             ruleMap.put("ChapterUrl", bookSourceBean.getRuleChapterUrl());
@@ -53,7 +55,7 @@ public class AnalyzeByRegex {
             for (String key : ruleMap.keySet()) {
                 String val = ruleMap.get(key);
                 ruleName.add(key);
-                hasVarParams.add(val.contains("@put") || val.contains("@get"));
+                hasVarParams.add(!TextUtils.isEmpty(val) && (val.contains("@put") || val.contains("@get")));
                 List<String> ruleParam = new ArrayList<>();
                 List<Integer> ruleType = new ArrayList<>();
                 AnalyzeByRegex.splitRegexRule(val, ruleParam, ruleType);
@@ -85,12 +87,10 @@ public class AnalyzeByRegex {
             if (!isEmpty(ruleVal.get("LastChapter"))) bookShelfBean.setLastChapterName(ruleVal.get("LastChapter"));
             if (!isEmpty(ruleVal.get("Introduce"))) bookInfoBean.setIntroduce(ruleVal.get("Introduce"));
             if (!isEmpty(ruleVal.get("CoverUrl"))) bookInfoBean.setCoverUrl(ruleVal.get("CoverUrl"));
-            String chapterUrl = ruleVal.get("ChapterUrl");
-            if (!isEmpty(chapterUrl))
-                bookInfoBean.setChapterUrl(NetworkUtils.getAbsoluteURL(baseUrl, chapterUrl));
+            if (!isEmpty(ruleVal.get("ChapterUrl"))) bookInfoBean.setChapterUrl(NetworkUtils.getAbsoluteURL(baseUrl, ruleVal.get("ChapterUrl")));
             else bookInfoBean.setChapterUrl(baseUrl);
             //如果目录页和详情页相同,暂存页面内容供获取目录用
-            if (ruleVal.get("ChapterUrl").equals(baseUrl)) bookInfoBean.setChapterListHtml(res);
+            if (bookInfoBean.getChapterUrl().equals(baseUrl)) bookInfoBean.setChapterListHtml(res);
             // 输出调试信息
             Debug.printLog(tag, "└详情预处理完成");
             Debug.printLog(tag, "┌获取书籍名称");
@@ -117,7 +117,7 @@ public class AnalyzeByRegex {
 
     // 正则表达式解析规则数据的通用方法(暂未使用,技术储备型代码)
     public static void getInfoByRegex(String res, String[] regList, int regIndex,
-                                      HashMap<String, String> ruleMap, final List<HashMap<String, String>> ruleVals) {
+                                      HashMap<String, String> ruleMap, final List<HashMap<String, String>> ruleVals) throws Exception {
         Matcher resM = Pattern.compile(regList[regIndex]).matcher(res);
         // 判断规则是否有效
         if (!resM.find()) {
@@ -151,13 +151,13 @@ public class AnalyzeByRegex {
                     for (int j = ruleParam.size(); j-- > 0; ) {
                         int regType = ruleType.get(j);
                         if (regType > 0) {
-                            if (j == 0 && ruleName.get(0) == "ruleChapterName") {
+                            if (j == 0 && Objects.equals(ruleName.get(0), "ruleChapterName")) {
                                 infoVal.insert(0, resM.group(regType) == null ? "" : "\uD83D\uDD12");
                             } else {
                                 infoVal.insert(0, resM.group(regType));
                             }
                         } else if (regType < 0) {
-                            if (j == 0 && ruleName.get(0) == "ruleChapterName") {
+                            if (j == 0 && Objects.equals(ruleName.get(0), "ruleChapterName")) {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                     infoVal.insert(0, resM.group(ruleParam.get(j)) == null ? "" : "\uD83D\uDD12");
                                 }
@@ -184,7 +184,12 @@ public class AnalyzeByRegex {
     }
 
     // 拆分正则表达式替换规则(如:$\d{1,2}或${name}) /*注意:千万别用正则表达式拆分字符串,效率太低了!*/
-    public static void splitRegexRule(String str, final List<String> ruleParam, final List<Integer> ruleType) {
+    public static void splitRegexRule(String str, final List<String> ruleParam, final List<Integer> ruleType) throws Exception {
+        if (TextUtils.isEmpty(str)) {
+            ruleParam.add("");
+            ruleType.add(0);
+            return;
+        }
         int index = 0, start = 0, len = str.length();
         while (index < len) {
             if (str.charAt(index) == '$') {
@@ -233,7 +238,7 @@ public class AnalyzeByRegex {
     }
 
     // 存取字符串中的put&get参数
-    public static String checkKeys(String str, AnalyzeRule analyzer) {
+    public static String checkKeys(String str, AnalyzeRule analyzer) throws Exception {
         if (str.contains("@put:{")) {
             Matcher putMatcher = Pattern.compile("@put:\\{([^,]*):([^\\}]*)\\}").matcher(str);
             while (putMatcher.find()) {

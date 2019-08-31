@@ -40,17 +40,24 @@ public class Debug {
     }
 
     public static void printLog(String tag, String msg) {
-        printLog(tag, msg, true);
+        printLog(tag, 1, msg, true);
     }
 
-    static void printLog(String tag, String msg, boolean print) {
-        printLog(tag, msg, print, false);
+    public static void printLog(String tag, int state, String msg) {
+        printLog(tag, state, msg, true);
     }
 
-    static void printLog(String tag, String msg, boolean print, boolean formatHtml) {
+    static void printLog(String tag, int state, String msg, boolean print) {
+        printLog(tag, state, msg, print, false);
+    }
+
+    static void printLog(String tag, int state, String msg, boolean print, boolean formatHtml) {
         if (print && Objects.equals(SOURCE_DEBUG_TAG, tag)) {
             if (formatHtml) {
                 msg = StringUtils.formatHtml(msg);
+            }
+            if (state == 111) {
+                msg = msg.replace("\n", ",");
             }
             msg = String.format("%s %s", getDoTime(), msg);
             RxBus.get().post(RxBusTag.PRINT_DEBUG_LOG, msg);
@@ -155,7 +162,8 @@ public class Debug {
                     @Override
                     public void onNext(List<BookChapterBean> chapterBeanList) {
                         if (chapterBeanList.size() > 0) {
-                            bookContentDebug(bookShelfBean, chapterBeanList.get(0));
+                            BookChapterBean nextChapter = chapterBeanList.size() > 2 ? chapterBeanList.get(1) : null;
+                            bookContentDebug(bookShelfBean, chapterBeanList.get(0), nextChapter);
                         } else {
                             printError("获取到的目录为空");
                         }
@@ -173,9 +181,9 @@ public class Debug {
                 });
     }
 
-    private void bookContentDebug(BookShelfBean bookShelfBean, BookChapterBean bookChapterBean) {
+    private void bookContentDebug(BookShelfBean bookShelfBean, BookChapterBean bookChapterBean, BookChapterBean nextChapterBean) {
         printLog(String.format("\n%s ≡开始获取正文页", getDoTime()));
-        WebBookModel.getInstance().getBookContent(bookShelfBean, bookChapterBean)
+        WebBookModel.getInstance().getBookContent(bookShelfBean, bookChapterBean, nextChapterBean)
                 .compose(RxUtils::toSimpleSingle)
                 .subscribe(new Observer<BookContentBean>() {
                     @Override

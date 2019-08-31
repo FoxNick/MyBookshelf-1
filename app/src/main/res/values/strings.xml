@@ -121,6 +121,7 @@
     <string name="book_file_selector">添加书籍</string>
     <string name="scan_book_source">扫描</string>
     <string name="copy_source">拷贝书源</string>
+    <string name="copy_source_no_find">拷贝书源无发现</string>
     <string name="paste_source">粘贴书源</string>
     <string name="source_rule_s">书源规则说明</string>
     <string name="check_update">检查更新</string>
@@ -238,7 +239,7 @@
     <string name="jf_convert_j">繁转简</string>
     <string name="page_mode">翻页模式</string>
     <string name="nb_file_sub_count">%1$d 项</string>
-    <string name="nb_file_path">存储卡:</string>
+    <string name="nb_file_path">存储卡</string>
     <string name="nb_file_add_shelf">加入书架</string>
     <string name="nb_file_add_shelves">加入书架(%1$d)</string>
     <string name="nb_file_add_succeed">成功添加%1$d本书</string>
@@ -446,4 +447,6 @@
     <string name="change_icon_summary">切换软件显示在桌面的图标</string>
     <string name="dsm_start"><![CDATA[<]]></string>
     <string name="dsm_end"><![CDATA[>]]></string>
+    <string name="show_enabled">显示勾选</string>
+    <string name="to_lh">扩展到刘海</string>
 </resources>

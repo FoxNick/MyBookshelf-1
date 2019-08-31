@@ -60,17 +60,17 @@ public class AnalyzeByJSonPath {
                 return result;
             }
         } else {
-            StringBuilder sb = new StringBuilder();
+            List<String> textS = new ArrayList<>();
             for (String rl : rules) {
                 String temp = getString(rl);
                 if (!TextUtils.isEmpty(temp)) {
-                    sb.append(temp);
+                    textS.add(temp);
                     if (elementsType.equals("|")) {
                         break;
                     }
                 }
             }
-            return sb.toString();
+            return TextUtils.join(",", textS).trim();
         }
     }
 
