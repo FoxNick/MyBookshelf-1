@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.kunfei.bookshelf.DbHelper;
 import com.kunfei.bookshelf.R;
+import com.kunfei.bookshelf.bean.BookInfoBean;
 import com.kunfei.bookshelf.bean.BookShelfBean;
 import com.kunfei.bookshelf.help.BookshelfHelp;
 import com.kunfei.bookshelf.help.ItemTouchCallback;
@@ -118,6 +118,8 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int index) {
         BookShelfBean bookShelfBean = books.get(index);
+        BookInfoBean bookInfoBean = bookShelfBean.getBookInfoBean();
+
         if (isArrange) {
             if (selectList.contains(bookShelfBean.getNoteUrl())) {
                 holder.vwSelect.setBackgroundResource(R.color.ate_button_disabled_light);
@@ -138,8 +140,9 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
         } else {
             holder.vwSelect.setVisibility(View.GONE);
         }
-        holder.tvName.setText(bookShelfBean.getBookInfoBean().getName());
+        holder.tvName.setText(bookInfoBean.getName());
         holder.tvName.setBackgroundColor(ThemeStore.backgroundColor(activity));
+
         if (!activity.isFinishing()) {
             if (TextUtils.isEmpty(bookShelfBean.getCustomCoverPath())) {
                 Glide.with(activity).load(bookShelfBean.getBookInfoBean().getCoverUrl())
@@ -165,7 +168,7 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
             }
         }
 
-        holder.flContent.setOnClickListener(v -> {
+        holder.ivCover.setOnClickListener(v -> {
             if (itemClickListener != null)
                 itemClickListener.onClick(v, index);
         });
@@ -175,7 +178,7 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
             }
         });
         if (!Objects.equals(bookshelfPx, "2")) {
-            holder.flContent.setOnLongClickListener(v -> {
+            holder.ivCover.setOnLongClickListener(v -> {
                 if (itemClickListener != null) {
                     itemClickListener.onLongClick(v, index);
                 }
@@ -233,7 +236,6 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        FrameLayout flContent;
         ImageView ivCover;
         TextView tvName;
         BadgeView bvUnread;
@@ -242,7 +244,6 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
 
         MyViewHolder(View itemView) {
             super(itemView);
-            flContent = itemView.findViewById(R.id.fl_content);
             ivCover = itemView.findViewById(R.id.iv_cover);
             tvName = itemView.findViewById(R.id.tv_name);
             bvUnread = itemView.findViewById(R.id.bv_unread);

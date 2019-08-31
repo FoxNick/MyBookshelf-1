@@ -70,9 +70,6 @@ import kotlin.Unit;
 import static com.kunfei.bookshelf.utils.NetworkUtils.isNetWorkAvailable;
 
 public class MainActivity extends BaseTabActivity<MainContract.Presenter> implements MainContract.View, BookListFragment.CallbackValue {
-    private static final int BACKUP_RESULT = 11;
-    private static final int RESTORE_RESULT = 12;
-    private static final int FILE_SELECT_RESULT = 13;
     private final int requestSource = 14;
     private String[] mTitles;
 
@@ -513,7 +510,6 @@ public class MainActivity extends BaseTabActivity<MainContract.Presenter> implem
      */
     private void setUpNavigationView() {
         navigationView.setBackgroundColor(ThemeStore.backgroundColor(this));
-        NavigationViewUtil.setItemTextColors(navigationView, getResources().getColor(R.color.tv_text_default), ThemeStore.accentColor(this));
         NavigationViewUtil.setItemIconColors(navigationView, getResources().getColor(R.color.tv_text_default), ThemeStore.accentColor(this));
         NavigationViewUtil.disableScrollbar(navigationView);
         @SuppressLint("InflateParams") View headerView = LayoutInflater.from(this).inflate(R.layout.navigation_header, null);

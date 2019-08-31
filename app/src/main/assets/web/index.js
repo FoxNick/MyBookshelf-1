@@ -43,7 +43,11 @@ function newRule(rule) {
 var RuleSources = [];
 if (localStorage.getItem('RuleSources')) {
 	RuleSources = JSON.parse(localStorage.getItem('RuleSources'));
-	RuleSources.forEach(item => $('#RuleList').innerHTML += newRule(item));
+	let ruleListArray = [];
+	RuleSources.forEach(item => { 
+		ruleListArray.push(newRule(item));
+	});
+	$('#RuleList').innerHTML += ruleListArray.join('');
 }
 // 页面加载完成事件
 window.onload = () => {
@@ -73,9 +77,15 @@ function HttpPost(url, data) {
 // 将书源表单转化为书源对象
 function rule2json() {
 	Object.keys(RuleJSON).forEach((key) => RuleJSON[key] = $('#' + key).value);
+	RuleJSON.bookSourceType = RuleJSON.bookSourceType.toUpperCase();
 	RuleJSON.serialNumber = RuleJSON.serialNumber == '' ? 0 : parseInt(RuleJSON.serialNumber);
 	RuleJSON.weight = RuleJSON.weight == '' ? 0 : parseInt(RuleJSON.weight);
 	RuleJSON.enable = RuleJSON.enable == '' || RuleJSON.enable.toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
+	let TempRules = RuleSources.filter(item => (item['bookSourceUrl'] == RuleJSON['bookSourceUrl'] ? item : null));
+	if (TempRules.length > 0) {
+		Object.keys(RuleJSON).forEach(key => TempRules[0][key] = RuleJSON[key]);
+		return TempRules[0];
+	}
 	return RuleJSON;
 }
 // 将书源对象填充到书源表单
@@ -143,6 +153,7 @@ $('.menu').addEventListener('click', e => {
 			(async () => {
 				await HttpPost(`/saveSources`, RuleSources).then(json => {
 					if (json.isSuccess) {
+						console.log('批量推送书源:', RuleSources);
 						let okData = json.data;
 						if (Array.isArray(okData)) {
 							let failMsg = ``;
@@ -171,11 +182,14 @@ $('.menu').addEventListener('click', e => {
 			(async () => {
 				await HttpGet(`/getSources`).then(json => {
 					if (json.isSuccess) {
+						console.log('批量拉取书源:', RuleSources);
 						$('#RuleList').innerHTML = ''
 						localStorage.setItem('RuleSources', JSON.stringify(RuleSources = json.data));
+						let ruleListArray = [];
 						RuleSources.forEach(item => {
-							$('#RuleList').innerHTML += newRule(item);
+							ruleListArray.push(newRule(item));
 						});
+						$('#RuleList').innerHTML += ruleListArray.join('');
 						alert(`成功拉取 ${RuleSources.length} 条书源`);
 					}
 					else {
@@ -295,19 +309,18 @@ $('.tab3>.titlebar').addEventListener('click', e => {
 							newSources.push(...fileJson);
 							if (window.confirm(`如何处理导入的书源?\n"确定": 覆盖当前列表(不会删除APP源)\n"取消": 插入列表尾部(自动忽略重复源)`)) {
 								localStorage.setItem('RuleSources', JSON.stringify(RuleSources = newSources));
-								$('#RuleList').innerHTML = ''
-								RuleSources.forEach(item => {
-									$('#RuleList').innerHTML += newRule(item);
-								});
+								$('#RuleList').innerHTML = '';
 							}
 							else {
 								newSources = newSources.filter(item => !JSON.stringify(RuleSources).includes(item.bookSourceUrl));
 								RuleSources.push(...newSources);
 								localStorage.setItem('RuleSources', JSON.stringify(RuleSources));
-								newSources.forEach(item => {
-									$('#RuleList').innerHTML += newRule(item);
-								});
 							}
+							let ruleListArray = [];
+							RuleSources.forEach(item => {
+								ruleListArray.push(newRule(item));
+							});
+							$('#RuleList').innerHTML += ruleListArray.join('');
 							alert(`成功导入 ${newSources.length} 条书源`);
 						}
 						catch (err) {
