@@ -121,12 +121,12 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
         BookInfoBean bookInfoBean = bookShelfBean.getBookInfoBean();
 
         if (isArrange) {
+            holder.vwSelect.setVisibility(View.VISIBLE);
             if (selectList.contains(bookShelfBean.getNoteUrl())) {
                 holder.vwSelect.setBackgroundResource(R.color.ate_button_disabled_light);
             } else {
                 holder.vwSelect.setBackgroundColor(Color.TRANSPARENT);
             }
-            holder.vwSelect.setVisibility(View.VISIBLE);
             holder.vwSelect.setOnClickListener(v -> {
                 if (selectList.contains(bookShelfBean.getNoteUrl())) {
                     selectList.remove(bookShelfBean.getNoteUrl());
@@ -138,7 +138,7 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
                 itemClickListener.onClick(v, index);
             });
         } else {
-            holder.vwSelect.setVisibility(View.GONE);
+            holder.vwSelect.setVisibility(View.VISIBLE);
         }
         holder.tvName.setText(bookInfoBean.getName());
         holder.tvName.setBackgroundColor(ThemeStore.backgroundColor(activity));
@@ -197,7 +197,12 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
             holder.rotateLoading.setVisibility(View.VISIBLE);
             holder.rotateLoading.start();
         } else {
-            holder.bvUnread.setBadgeCount(bookShelfBean.getUnreadChapterNum());
+            if (bookShelfBean.getHasUpdate()) {
+                holder.bvUnread.setBadgeCount(bookShelfBean.getNewChapters());
+            } else {
+                holder.bvUnread.setBadgeCount(bookShelfBean.getUnreadChapterNum());
+            }
+            //holder.bvUnread.setBadgeCount(bookShelfBean.getUnreadChapterNum());
             holder.bvUnread.setHighlight(bookShelfBean.getHasUpdate());
             holder.rotateLoading.setVisibility(View.INVISIBLE);
             holder.rotateLoading.stop();

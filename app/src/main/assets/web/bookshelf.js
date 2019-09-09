@@ -41,12 +41,14 @@ var init = () => {
                 alert(getBookshelf.errorMsg);
                 return;
             }
+			var n = 0;
             books = data.data.sort((book1, book2) => book1.serialNumber - book2.serialNumber);
             books.forEach(book => {
                 let bookDiv = $c("div");
                 let img = $c("img");
                 img.src = book.bookInfoBean.coverUrl || randomImg;
-                img.setAttribute("data-series-num", book.serialNumber);
+                img.setAttribute("data-series-num", n);
+				n += 1;
                 bookDiv.appendChild(img);
                 bookDiv.innerHTML += `<table><tbody>
                                 <tr><td>书名：</td><td>${book.bookInfoBean.name}</td></tr>

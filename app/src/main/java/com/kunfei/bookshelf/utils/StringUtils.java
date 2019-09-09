@@ -361,4 +361,11 @@ public class StringUtils {
                 .replaceAll("^[\\n\\s]+", "　　")//移除开头空行,并增加段前缩进2个汉字
                 .replaceAll("[\\n\\s]+$", "");//移除尾部空行
     }
+    public static boolean containsIgnoreCase(String base, String constraint) {
+        if (base == null) {
+            return false;
+        }
+        return base.toLowerCase().contains(constraint == null ? "" : constraint.toLowerCase());
+    }
+
 }

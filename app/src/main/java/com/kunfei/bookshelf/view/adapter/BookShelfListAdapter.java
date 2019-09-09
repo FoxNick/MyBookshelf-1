@@ -220,7 +220,12 @@ public class BookShelfListAdapter extends RecyclerView.Adapter<BookShelfListAdap
             holder.rotateLoading.setVisibility(View.VISIBLE);
             holder.rotateLoading.start();
         } else {
-            holder.bvUnread.setBadgeCount(bookShelfBean.getUnreadChapterNum());
+            if (bookShelfBean.getHasUpdate()) {
+                holder.bvUnread.setBadgeCount(bookShelfBean.getNewChapters());
+            } else {
+                holder.bvUnread.setBadgeCount(bookShelfBean.getUnreadChapterNum());
+            }
+            //holder.bvUnread.setBadgeCount(bookShelfBean.getUnreadChapterNum());
             holder.bvUnread.setHighlight(bookShelfBean.getHasUpdate());
             holder.rotateLoading.setVisibility(View.INVISIBLE);
             holder.rotateLoading.stop();

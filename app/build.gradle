@@ -10,8 +10,8 @@ static def releaseTime() {
 
 def name = "YueDu"
 def version = "2." + releaseTime()
-def gitCommits = Integer.parseInt("5307")
-
+//def gitCommits = Integer.parseInt("5307")
+def gitCommits = Integer.parseInt('git rev-list --count HEAD'.execute([], project.rootDir).text.trim())
 def RELEASE_STORE_FILE = ''
 def RELEASE_KEY_PASSWORD = ''
 def RELEASE_KEY_ALIAS = ''

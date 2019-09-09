@@ -56,7 +56,7 @@ public class UpdateManager {
                             UpdateActivity.startThis(activity, updateInfo);
                         } else if (showMsg) {
                             Toast.makeText(activity, "已是最新版本", Toast.LENGTH_SHORT).show();
-                            UpdateActivity.startThis(activity, updateInfo);
+                            //UpdateActivity.startThis(activity, updateInfo);
                         }
                     }
 
