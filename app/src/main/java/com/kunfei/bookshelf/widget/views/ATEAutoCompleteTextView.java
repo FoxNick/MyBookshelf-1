@@ -1,6 +1,7 @@
 package com.kunfei.bookshelf.widget.views;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
 
@@ -35,4 +36,17 @@ public class ATEAutoCompleteTextView extends AppCompatAutoCompleteTextView {
                     .create());
         }
     }
+
+    @Override
+    public boolean enoughToFilter() {
+        return true;
+    }
+
+    @Override
+    protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
+        super.onFocusChanged(focused, direction, previouslyFocusedRect);
+
+        showDropDown();
+    }
+
 }
