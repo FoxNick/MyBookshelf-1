@@ -1,9 +1,10 @@
 package com.kunfei.bookshelf.widget.views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 
@@ -42,11 +43,12 @@ public class ATEAutoCompleteTextView extends AppCompatAutoCompleteTextView {
         return true;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
-    protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
-        super.onFocusChanged(focused, direction, previouslyFocusedRect);
-
-        showDropDown();
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            showDropDown();
+        }
+        return super.onTouchEvent(event);
     }
-
 }
