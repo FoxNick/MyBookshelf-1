@@ -1825,6 +1825,5 @@ public abstract class PageLoader {
          */
         void onPageChange(int chapterIndex, int pageIndex, boolean resetReadAloud);
 
-        void vipPop();
     }
 }

@@ -116,7 +116,7 @@ public class BookListFragment extends MBaseFragment<BookListContract.Presenter> 
             bookShelfAdapter = new BookShelfListAdapter(getActivity());
         } else {
             rvBookshelf.setLayoutManager(new GridLayoutManager(getContext(), bookshelfLayout + 2));
-            bookShelfAdapter = new BookShelfGridAdapter(getActivity());
+            bookShelfAdapter = new BookShelfGridAdapter(getActivity(),bookshelfLayout + 2);
         }
         rvBookshelf.setAdapter((RecyclerView.Adapter) bookShelfAdapter);
         refreshLayout.setColorSchemeColors(ThemeStore.accentColor(MApplication.getInstance()));

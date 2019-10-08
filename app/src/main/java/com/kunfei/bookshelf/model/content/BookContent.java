@@ -59,8 +59,7 @@ class BookContent {
             if (TextUtils.isEmpty(baseUrl)) {
                 baseUrl = NetworkUtils.getAbsoluteURL(bookShelfBean.getBookInfoBean().getChapterUrl(), chapterBean.getDurChapterUrl());
             }
-            if (StringUtils.isJsonType(s) && !MApplication.getInstance().getDonateHb()) {
-                e.onError(new VipThrowable());
+            if (StringUtils.isJsonType(s)) {
                 e.onComplete();
                 return;
             }

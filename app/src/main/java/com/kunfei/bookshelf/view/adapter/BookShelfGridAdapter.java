@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -22,6 +23,7 @@ import com.kunfei.bookshelf.bean.BookInfoBean;
 import com.kunfei.bookshelf.bean.BookShelfBean;
 import com.kunfei.bookshelf.help.BookshelfHelp;
 import com.kunfei.bookshelf.help.ItemTouchCallback;
+import com.kunfei.bookshelf.utils.ScreenUtils;
 import com.kunfei.bookshelf.utils.theme.ThemeStore;
 import com.kunfei.bookshelf.view.adapter.base.OnItemClickListenerTwo;
 import com.kunfei.bookshelf.widget.BadgeView;
@@ -40,6 +42,7 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
     private String bookshelfPx;
     private Activity activity;
     private HashSet<String> selectList = new HashSet<>();
+    private int lie;
 
     private ItemTouchCallback.OnItemTouchCallbackListener itemTouchCallbackListener = new ItemTouchCallback.OnItemTouchCallbackListener() {
         @Override
@@ -64,8 +67,9 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
         }
     };
 
-    public BookShelfGridAdapter(Activity activity) {
+    public BookShelfGridAdapter(Activity activity, int lie) {
         this.activity = activity;
+        this.lie = lie;
         books = new ArrayList<>();
     }
 
@@ -250,6 +254,10 @@ public class BookShelfGridAdapter extends RecyclerView.Adapter<BookShelfGridAdap
         MyViewHolder(View itemView) {
             super(itemView);
             ivCover = itemView.findViewById(R.id.iv_cover);
+            ConstraintLayout ivLie = itemView.findViewById(R.id.iv_lie);
+            if(lie == 4){
+                ivLie.setPadding(ScreenUtils.dpToPx(5),ScreenUtils.dpToPx(10),ScreenUtils.dpToPx(5),0);
+            }
             tvName = itemView.findViewById(R.id.tv_name);
             bvUnread = itemView.findViewById(R.id.bv_unread);
             rotateLoading = itemView.findViewById(R.id.rl_loading);

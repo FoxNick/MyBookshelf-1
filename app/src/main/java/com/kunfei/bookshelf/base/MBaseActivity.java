@@ -156,17 +156,29 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
             } else {
                 mImmersionBar.statusBarDarkFont(false);
             }
-            if (!preferences.getBoolean("navigationBarColorChange", false)) {
-                mImmersionBar.navigationBarColor(R.color.black);
-                mImmersionBar.navigationBarDarkFont(false);
-            } else if (ImmersionBar.canNavigationBarDarkFont()) {
-                mImmersionBar.navigationBarColorInt(ThemeStore.primaryColorDark(this));
-                if (ColorUtil.isColorLight(ThemeStore.primaryColor(this))) {
-                    mImmersionBar.navigationBarDarkFont(true);
-                } else {
+            if (preferences.getBoolean("navigationBarColorChange", false) || ImmersionBar.canNavigationBarDarkFont())
+                {
+                    if (ImmersionBar.canNavigationBarDarkFont()) {
+                        mImmersionBar.navigationBarColorInt(ThemeStore.primaryColorDark(this));
+                        if (ColorUtil.isColorLight(ThemeStore.primaryColor(this))) {
+                            mImmersionBar.navigationBarDarkFont(true);
+                        } else {
+                            mImmersionBar.navigationBarDarkFont(false);
+                        }
+                    } else {
+                        mImmersionBar.navigationBarColorInt(ThemeStore.primaryColor(this));
+                        if (ColorUtil.isColorLight(ThemeStore.primaryColor(this))) {
+                            mImmersionBar.navigationBarDarkFont(true,0.2f);
+                        } else {
+                            mImmersionBar.navigationBarDarkFont(false);
+                        }
+                    }
+             }
+             if (!preferences.getBoolean("navigationBarColorChange", false)) {
+                    mImmersionBar.navigationBarColor(R.color.black);
                     mImmersionBar.navigationBarDarkFont(false);
-                }
-            }
+             }
+
             mImmersionBar.init();
         } catch (Exception ignored) {
         }

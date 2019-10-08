@@ -4,10 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp">
+    android:id="@+id/iv_lie"
+    android:padding="10dp">
 
     <com.kunfei.bookshelf.widget.CoverImageView
         android:id="@+id/iv_cover"
@@ -47,11 +45,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:gravity="center"
         android:singleLine="true"
         android:text="@string/app_name"
         android:textColor="@color/tv_text_default"
-        android:textSize="15sp"
+        android:textSize="13sp"
+        android:ellipsize="middle"
+        android:gravity="center_horizontal"
         app:layout_constraintTop_toBottomOf="@+id/iv_cover" />
 
     <View
