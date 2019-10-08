@@ -22,6 +22,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -30,9 +31,11 @@ import com.kunfei.basemvplib.BitIntentDataManager;
 import com.kunfei.bookshelf.MApplication;
 import com.kunfei.bookshelf.R;
 import com.kunfei.bookshelf.base.MBaseActivity;
+import com.kunfei.bookshelf.bean.BookInfoBean;
 import com.kunfei.bookshelf.bean.SearchBookBean;
 import com.kunfei.bookshelf.bean.SearchHistoryBean;
 import com.kunfei.bookshelf.constant.RxBusTag;
+import com.kunfei.bookshelf.help.BookshelfHelp;
 import com.kunfei.bookshelf.model.BookSourceManager;
 import com.kunfei.bookshelf.presenter.BookDetailPresenter;
 import com.kunfei.bookshelf.presenter.SearchBookPresenter;
@@ -42,6 +45,7 @@ import com.kunfei.bookshelf.utils.Selector;
 import com.kunfei.bookshelf.utils.SoftInputUtil;
 import com.kunfei.bookshelf.utils.theme.ThemeStore;
 import com.kunfei.bookshelf.view.adapter.SearchBookAdapter;
+import com.kunfei.bookshelf.view.adapter.SearchBookshelfAdapter;
 import com.kunfei.bookshelf.widget.explosion_field.ExplosionField;
 import com.kunfei.bookshelf.widget.recycler.refresh.OnLoadMoreListener;
 import com.kunfei.bookshelf.widget.recycler.refresh.RefreshRecyclerView;
@@ -52,7 +56,8 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SearchBookActivity extends MBaseActivity<SearchBookContract.Presenter> implements SearchBookContract.View {
+public class SearchBookActivity extends MBaseActivity<SearchBookContract.Presenter>
+        implements SearchBookContract.View, SearchBookshelfAdapter.CallBack {
     private final int requestSource = 14;
 
     @BindView(R.id.searchView)
@@ -71,6 +76,10 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     RefreshRecyclerView rfRvSearchBooks;
     @BindView(R.id.fabSearchStop)
     FloatingActionButton fabSearchStop;
+    @BindView(R.id.tv_bookshelf)
+    TextView tvBookshelf;
+    @BindView(R.id.rv_bookshelf)
+    RecyclerView rvBookshelf;
 
     private View refreshErrorView;
     private ExplosionField mExplosionField;
@@ -79,6 +88,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     private boolean showHistory;
     private String searchKey;
     private Menu menu;
+    private SearchBookshelfAdapter searchBookshelfAdapter;
 
     public static void startByKey(Context context, String searchKey) {
         Intent intent = new Intent(context, SearchBookActivity.class);
@@ -107,6 +117,7 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     protected void initData() {
         mExplosionField = ExplosionField.attach2Window(this);
         searchBookAdapter = new SearchBookAdapter(this);
+        searchBookshelfAdapter = new SearchBookshelfAdapter(this);
     }
 
     @SuppressLint("InflateParams")
@@ -144,6 +155,8 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
             fabSearchStop.hide();
             mPresenter.stopSearch();
         });
+        rvBookshelf.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
+        rvBookshelf.setAdapter(searchBookshelfAdapter);
     }
 
     //设置ToolBar
@@ -227,6 +240,20 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                if (newText != null) {
+                    List<BookInfoBean> beans = BookshelfHelp.searchBookInfo(newText);
+                    searchBookshelfAdapter.setItems(beans);
+                    if (beans.size() > 0) {
+                        tvBookshelf.setVisibility(View.VISIBLE);
+                        rvBookshelf.setVisibility(View.VISIBLE);
+                    } else {
+                        tvBookshelf.setVisibility(View.GONE);
+                        rvBookshelf.setVisibility(View.GONE);
+                    }
+                } else {
+                    tvBookshelf.setVisibility(View.GONE);
+                    rvBookshelf.setVisibility(View.GONE);
+                }
                 if (!newText.toLowerCase().startsWith("set")) {
                     mPresenter.querySearchHistory(newText);
                 } else {
@@ -515,5 +542,12 @@ public class SearchBookActivity extends MBaseActivity<SearchBookContract.Present
     public void finish() {
         super.finish();
         overridePendingTransition(0, android.R.anim.fade_out);
+    }
+
+    @Override
+    public void openBookInfo(BookInfoBean bookInfoBean) {
+        Intent intent = new Intent(this, BookDetailActivity.class);
+        intent.putExtra("noteUrl", bookInfoBean.getNoteUrl());
+        startActivity(intent);
     }
 }
