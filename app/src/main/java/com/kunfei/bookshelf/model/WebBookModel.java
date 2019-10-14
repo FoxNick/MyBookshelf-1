@@ -2,6 +2,7 @@
 package com.kunfei.bookshelf.model;
 
 import android.annotation.SuppressLint;
+import android.text.TextUtils;
 
 import com.hwangjr.rxbus.RxBus;
 import com.kunfei.bookshelf.DbHelper;
@@ -13,7 +14,9 @@ import com.kunfei.bookshelf.bean.BookShelfBean;
 import com.kunfei.bookshelf.bean.SearchBookBean;
 import com.kunfei.bookshelf.constant.RxBusTag;
 import com.kunfei.bookshelf.help.BookshelfHelp;
+import com.kunfei.bookshelf.model.content.DefaultShuqi;
 import com.kunfei.bookshelf.model.content.WebBook;
+import com.kunfei.bookshelf.model.impl.IStationBookModel;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -24,17 +27,34 @@ import static android.text.TextUtils.isEmpty;
 import static com.kunfei.bookshelf.constant.AppConstant.TIME_OUT;
 
 public class WebBookModel {
+    private volatile static WebBookModel sInstance;
 
     public static WebBookModel getInstance() {
-        return new WebBookModel();
+        if (sInstance == null) {
+            synchronized (WebBookModel.class) {
+                if (sInstance == null) {
+                    sInstance = new WebBookModel();
+                }
+            }
+        }
+        return sInstance;
     }
-
+    //获取book source class
+    private IStationBookModel getBookSourceModel(String tag) {
+        if (BookShelfBean.LOCAL_TAG.equals(tag)) {
+            return null;
+        } else if (TextUtils.equals(tag, "http://read.xiaoshuo1-sm.com")) {
+            return DefaultShuqi.getInstance(tag);
+        }  else {
+            return WebBook.getInstance(tag);
+        }
+    }
     /**
      * 网络请求并解析书籍信息
      * return BookShelfBean
      */
     public Observable<BookShelfBean> getBookInfo(BookShelfBean bookShelfBean) {
-        return WebBook.getInstance(bookShelfBean.getTag())
+        return getBookSourceModel(bookShelfBean.getTag())
                 .getBookInfo(bookShelfBean)
                 .timeout(TIME_OUT, TimeUnit.SECONDS);
     }
@@ -44,7 +64,7 @@ public class WebBookModel {
      * return BookShelfBean
      */
     public Observable<List<BookChapterBean>> getChapterList(final BookShelfBean bookShelfBean) {
-        return WebBook.getInstance(bookShelfBean.getTag())
+        return getBookSourceModel(bookShelfBean.getTag())
                 .getChapterList(bookShelfBean)
                 .flatMap((chapterList) -> upChapterList(bookShelfBean, chapterList))
                 .timeout(TIME_OUT, TimeUnit.SECONDS);
@@ -54,7 +74,7 @@ public class WebBookModel {
      * 章节缓存
      */
     public Observable<BookContentBean> getBookContent(BookShelfBean bookShelfBean, BaseChapterBean chapterBean, BaseChapterBean nextChapterBean) {
-        return WebBook.getInstance(chapterBean.getTag())
+        return getBookSourceModel(chapterBean.getTag())
                 .getBookContent(chapterBean, nextChapterBean, bookShelfBean)
                 .flatMap((bookContentBean -> saveContent(bookShelfBean.getBookInfoBean(), chapterBean, bookContentBean)))
                 .timeout(TIME_OUT, TimeUnit.SECONDS);
@@ -64,7 +84,7 @@ public class WebBookModel {
      * 搜索
      */
     public Observable<List<SearchBookBean>> searchBook(String content, int page, String tag) {
-        return WebBook.getInstance(tag)
+        return getBookSourceModel(tag)
                 .searchBook(content, page)
                 .timeout(TIME_OUT, TimeUnit.SECONDS);
     }
@@ -73,7 +93,7 @@ public class WebBookModel {
      * 发现页
      */
     public Observable<List<SearchBookBean>> findBook(String url, int page, String tag) {
-        return WebBook.getInstance(tag)
+        return getBookSourceModel(tag)
                 .findBook(url, page)
                 .timeout(TIME_OUT, TimeUnit.SECONDS);
     }
@@ -90,6 +110,13 @@ public class WebBookModel {
                 chapter.setNoteUrl(bookShelfBean.getNoteUrl());
             }
             if (bookShelfBean.getChapterListSize() < chapterList.size()) {
+			    final int newChapters;
+                if (bookShelfBean.getChapterListSize() > 0) {
+                    newChapters = bookShelfBean.getNewChapters() + (chapterList.size() - bookShelfBean.getChapterListSize());
+                } else {
+                    newChapters = 0;
+                }
+				bookShelfBean.setNewChapters(Math.min(newChapters, chapterList.size()));
                 bookShelfBean.setHasUpdate(true);
                 bookShelfBean.setFinalRefreshData(System.currentTimeMillis());
                 bookShelfBean.getBookInfoBean().setFinalRefreshData(System.currentTimeMillis());

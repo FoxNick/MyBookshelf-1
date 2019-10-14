@@ -52,9 +52,7 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
                     .into(myViewHolder.ivCover);
         }
         String title = searchBooks.get(position).getName();
-        String author = searchBooks.get(position).getAuthor();
-        if (author != null && author.trim().length() > 0)
-            title = String.format("%s (%s)", title, author);
+
         myViewHolder.tvName.setText(title);
         BookKindBean bookKindBean = new BookKindBean(searchBooks.get(position).getKind());
         if (isTrimEmpty(bookKindBean.getKind())) {
@@ -75,26 +73,29 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
             myViewHolder.tvState.setVisibility(View.VISIBLE);
             myViewHolder.tvState.setText(bookKindBean.getState());
         }
+        //作者
+        if (isTrimEmpty(searchBooks.get(position).getAuthor())) {
+            //myViewHolder.tvauthor.setVisibility(View.GONE);
+        } else {
+            //myViewHolder.tvauthor.setVisibility(View.VISIBLE);
+            myViewHolder.tvauthor.setText(activity.getString(R.string.author_format, searchBooks.get(position).getAuthor()));
+        }
         //来源
         if (isTrimEmpty(searchBooks.get(position).getOrigin())) {
-            myViewHolder.tvOrigin.setVisibility(View.GONE);
+            //myViewHolder.tvOrigin.setVisibility(View.GONE);
         } else {
-            myViewHolder.tvOrigin.setVisibility(View.VISIBLE);
+            //myViewHolder.tvOrigin.setVisibility(View.VISIBLE);
             myViewHolder.tvOrigin.setText(activity.getString(R.string.origin_format, searchBooks.get(position).getOrigin()));
         }
-        //最新章节
-        if (isTrimEmpty(searchBooks.get(position).getLastChapter())) {
-            myViewHolder.tvLasted.setVisibility(View.GONE);
+        //最新章节/简介
+        final String lastChapter = searchBooks.get(position).getLastChapter();
+        String desc = !StringUtils.isBlank(lastChapter) ? lastChapter
+                : !StringUtils.isBlank(searchBooks.get(position).getIntroduce()) ? searchBooks.get(position).getIntroduce() : "";
+        if (isTrimEmpty(StringUtils.trim(desc))) {
+            //myViewHolder.tvLasted.setVisibility(View.GONE);
         } else {
-            myViewHolder.tvLasted.setText(searchBooks.get(position).getLastChapter());
-            myViewHolder.tvLasted.setVisibility(View.VISIBLE);
-        }
-        //简介
-        if (isTrimEmpty(searchBooks.get(position).getIntroduce())) {
-            myViewHolder.tvIntroduce.setVisibility(View.GONE);
-        } else {
-            myViewHolder.tvIntroduce.setText(StringUtils.formatHtml(searchBooks.get(position).getIntroduce()));
-            myViewHolder.tvIntroduce.setVisibility(View.VISIBLE);
+            myViewHolder.tvLasted.setText(StringUtils.trim(desc));
+            //myViewHolder.tvLasted.setVisibility(View.VISIBLE);
         }
 
         myViewHolder.flContent.setOnClickListener(v -> {
@@ -149,7 +150,7 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
         TextView tvKind;
         TextView tvLasted;
         TextView tvOrigin;
-        TextView tvIntroduce;
+        TextView tvauthor;
 
         MyViewHolder(View itemView) {
             super(itemView);
@@ -161,7 +162,7 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
             tvLasted = itemView.findViewById(R.id.tv_lasted);
             tvKind = itemView.findViewById(R.id.tv_kind);
             tvOrigin = itemView.findViewById(R.id.tv_origin);
-            tvIntroduce = itemView.findViewById(R.id.tv_introduce);
+            tvauthor = itemView.findViewById(R.id.tv_author);
         }
     }
 }

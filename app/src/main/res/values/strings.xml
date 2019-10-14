@@ -32,6 +32,7 @@
     <string name="net_error_10001">没有网络</string>
     <string name="net_error_10002">网络连接超时</string>
     <string name="net_error_10003">数据解析失败</string>
+    <string name="author_format">作者: %s</string>
     <string name="origin_format">来源: %s</string>
     <string name="read_dur_progress">最近: %s</string>
     <string name="book_name">书名</string>

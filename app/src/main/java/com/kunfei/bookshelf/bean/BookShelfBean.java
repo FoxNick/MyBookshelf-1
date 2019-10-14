@@ -116,6 +116,7 @@ public class BookShelfBean implements Cloneable, BaseBookBean {
         variable = new Gson().toJson(variableMap);
     }
 
+
     @Override
     public Map<String, String> getVariableMap() {
         if (variableMap == null && !TextUtils.isEmpty(variable)) {

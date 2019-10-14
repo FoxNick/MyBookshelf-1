@@ -52,7 +52,7 @@ public class UpdateManager {
                     @Override
                     public void onNext(UpdateInfoBean updateInfo) {
                         if (updateInfo.getUpDate()) {
-
+                            //UpdateActivity.startThis(activity, updateInfo);
                         } else if (showMsg) {
                             Toast.makeText(activity, "已是最新版本", Toast.LENGTH_SHORT).show();
                             //UpdateActivity.startThis(activity, updateInfo);

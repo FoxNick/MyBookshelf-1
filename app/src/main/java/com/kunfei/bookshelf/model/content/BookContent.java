@@ -59,10 +59,7 @@ class BookContent {
             if (TextUtils.isEmpty(baseUrl)) {
                 baseUrl = NetworkUtils.getAbsoluteURL(bookShelfBean.getBookInfoBean().getChapterUrl(), chapterBean.getDurChapterUrl());
             }
-            if (StringUtils.isJsonType(s)) {
-                e.onComplete();
-                return;
-            }
+
             Debug.printLog(tag, "┌成功获取正文页");
             Debug.printLog(tag, "└" + baseUrl);
             BookContentBean bookContentBean = new BookContentBean();

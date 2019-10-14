@@ -20,6 +20,7 @@ import com.kunfei.bookshelf.utils.StringUtils;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -46,6 +47,22 @@ public class BookSourceManager {
                 .orderRaw(getBookSourceSort())
                 .orderAsc(BookSourceBeanDao.Properties.SerialNumber)
                 .list();
+    }
+
+    public static List<BookSourceBean> getFindEnabled() {
+        List<BookSourceBean> sourceBeanList = DbHelper.getInstance().getDaoSession().getBookSourceBeanDao().queryBuilder()
+                .orderRaw(BookSourceBeanDao.Properties.Weight.columnName + " DESC")
+                .orderAsc(BookSourceBeanDao.Properties.SerialNumber)
+                .list();
+
+        Iterator<BookSourceBean> iterator = sourceBeanList.iterator();
+        while (iterator.hasNext()) {
+            Boolean enableFind = iterator.next().getEnableFind();
+            if (enableFind != null && !enableFind) {
+                iterator.remove();
+            }
+        }
+        return sourceBeanList;
     }
 
     public static List<BookSourceBean> getSelectedBookSourceBySerialNumber() {

@@ -40,19 +40,22 @@ import com.kunfei.bookshelf.BuildConfig;
 import com.kunfei.bookshelf.R;
 import com.kunfei.bookshelf.base.MBaseActivity;
 import com.kunfei.bookshelf.base.observer.MyObserver;
-import com.kunfei.bookshelf.base.observer.MySingleObserver;
+
 import com.kunfei.bookshelf.bean.BookSourceBean;
 import com.kunfei.bookshelf.constant.BookType;
+import com.kunfei.bookshelf.constant.RxExecutors;
 import com.kunfei.bookshelf.model.BookSourceManager;
 import com.kunfei.bookshelf.presenter.SourceEditPresenter;
 import com.kunfei.bookshelf.presenter.contract.SourceEditContract;
 import com.kunfei.bookshelf.service.ShareService;
-import com.kunfei.bookshelf.utils.RxUtils;
+
 import com.kunfei.bookshelf.utils.SoftInputUtil;
 import com.kunfei.bookshelf.utils.theme.ThemeStore;
 import com.kunfei.bookshelf.view.adapter.SourceEditAdapter;
 import com.kunfei.bookshelf.view.popupwindow.KeyboardToolPop;
 import com.kunfei.bookshelf.widget.views.ATECheckBox;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -66,7 +69,10 @@ import butterknife.ButterKnife;
 import cn.bingoogolapple.qrcode.zxing.QRCodeEncoder;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 import io.reactivex.SingleOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 
 import static android.text.TextUtils.isEmpty;
 
@@ -87,6 +93,8 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     LinearLayout llContent;
     @BindView(R.id.cb_is_audio)
     ATECheckBox cbIsAudio;
+    @BindView(R.id.cb_is_find)
+    ATECheckBox cbIsFind;
     @BindView(R.id.cb_is_enable)
     ATECheckBox cbIsEnable;
     @BindView(R.id.tv_edit_find)
@@ -100,6 +108,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     private BookSourceBean bookSourceBean;
     private int serialNumber;
     private boolean enable;
+    private boolean enableFind;
     private String title;
     private PopupWindow mSoftKeyboardTool;
     private boolean mIsSoftKeyBoardShowing = false;
@@ -138,6 +147,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
             title = savedInstanceState.getString("title");
             serialNumber = savedInstanceState.getInt("serialNumber");
             enable = savedInstanceState.getBoolean("enable");
+            enableFind = savedInstanceState.getBoolean("enableFind");
         }
         super.onCreate(savedInstanceState);
     }
@@ -148,6 +158,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         outState.putString("title", title);
         outState.putInt("serialNumber", serialNumber);
         outState.putBoolean("enable", enable);
+        outState.putBoolean("enableFind", enableFind);
     }
 
     @Override
@@ -168,6 +179,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
                 bookSourceBean = (BookSourceBean) BitIntentDataManager.getInstance().getData(key);
                 serialNumber = bookSourceBean.getSerialNumber();
                 enable = bookSourceBean.getEnable();
+                enableFind = bookSourceBean.getEnableFind();
             }
         }
 
@@ -281,6 +293,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         }
         cbIsAudio.setChecked(Objects.equals(bookSourceBean.getBookSourceType(), BookType.AUDIO));
         cbIsEnable.setChecked(bookSourceBean.getEnable());
+        cbIsFind.setChecked(bookSourceBean.getEnableFind());
     }
 
     private void scanBookSource() {
@@ -416,47 +429,65 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         }
         bookSourceBeanN.setSerialNumber(serialNumber);
         bookSourceBeanN.setEnable(cbIsEnable.isChecked());
+        bookSourceBeanN.setEnableFind(cbIsFind.isChecked());
         bookSourceBeanN.setBookSourceType(cbIsAudio.isChecked() ? BookType.AUDIO : null);
         return bookSourceBeanN;
     }
 
+    public void shareSource(File file, String mediaType) {
+        Uri contentUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileProvider", file);
+        final Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(Intent.EXTRA_STREAM, contentUri);
+        intent.setType(mediaType);
+        startActivity(Intent.createChooser(intent, "分享书源"));
+    }
+
     @SuppressLint("SetWorldReadable")
-    private void shareBookSource() {
-        Single.create((SingleOnSubscribe<Bitmap>) emitter -> {
+    public void handleSourceShare() {
+        Single.create((SingleOnSubscribe<File>) emitter -> {
             QRCodeEncoder.HINTS.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
-            Bitmap bitmap = QRCodeEncoder.syncEncodeQRCode(getBookSourceStr(true), 600);
+            Bitmap bitmap = QRCodeEncoder.syncEncodeQRCode(getBookSourceStr(true), 800);
             QRCodeEncoder.HINTS.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
-            emitter.onSuccess(bitmap);
-        }).compose(RxUtils::toSimpleSingle)
-                .subscribe(new MySingleObserver<Bitmap>() {
+            if (bitmap != null) {
+                File file = new File(getContext().getExternalCacheDir(), "bookSource.png");
+                FileOutputStream fOut = new FileOutputStream(file);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+                fOut.flush();
+                fOut.close();
+                file.setReadable(true, false);
+                emitter.onSuccess(file);
+            } else if (StringUtils.isNotBlank(bookSourceBean.getBookSourceName())) {
+                File file = new File(getContext().getExternalCacheDir(), bookSourceBean.getBookSourceName() + ".txt");
+                FileOutputStream fOut = new FileOutputStream(file);
+                fOut.write(getBookSourceStr(true).getBytes());
+                fOut.flush();
+                fOut.close();
+                file.setReadable(true, false);
+                emitter.onSuccess(file);
+            } else {
+                emitter.onError(new IllegalArgumentException("can not generate share file"));
+            }
+        }).subscribeOn(RxExecutors.getDefault())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<File>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
 
                     @Override
-                    public void onSuccess(Bitmap bitmap) {
-                        if (bitmap == null) {
-                            toast("书源文字太多,生成二维码失败");
-                            return;
-                        }
-                        try {
-                            File file = new File(SourceEditActivity.this.getExternalCacheDir(), "bookSource.png");
-                            FileOutputStream fOut = new FileOutputStream(file);
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
-                            fOut.flush();
-                            fOut.close();
-                            //noinspection ResultOfMethodCallIgnored
-                            file.setReadable(true, false);
-                            Uri contentUri = FileProvider.getUriForFile(SourceEditActivity.this, BuildConfig.APPLICATION_ID + ".fileProvider", file);
-                            final Intent intent = new Intent(Intent.ACTION_SEND);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra(Intent.EXTRA_STREAM, contentUri);
-                            intent.setType("image/png");
-                            startActivity(Intent.createChooser(intent, "分享书源"));
-                        } catch (Exception e) {
-                            toast(e.getLocalizedMessage());
-                        }
+                    public void onSuccess(File file) {
+                        shareSource(file, file.getName().endsWith(".txt") ? "text/plain" : "image/png");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        toast("分享失败");
                     }
                 });
-
     }
+
 
     private void openRuleSummary() {
         try {
@@ -528,7 +559,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
                 scanBookSource();
                 break;
             case R.id.action_share_it:
-                shareBookSource();
+                handleSourceShare();
                 break;
             case R.id.action_share_wifi:
                 ShareService.startThis(this, Collections.singletonList(getBookSource(true)));

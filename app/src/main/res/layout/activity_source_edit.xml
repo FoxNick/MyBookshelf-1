@@ -44,6 +44,12 @@
             android:checked="false"
             android:text="@string/audio" />
 
+        <com.kunfei.bookshelf.widget.views.ATECheckBox
+            android:id="@+id/cb_is_find"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="启用发现" />
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"

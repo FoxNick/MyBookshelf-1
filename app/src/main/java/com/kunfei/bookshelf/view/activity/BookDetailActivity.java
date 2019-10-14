@@ -129,6 +129,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         moDialogHUD = new MoDialogHUD(this);
         tvIntro.setMovementMethod(ScrollingMovementMethod.getInstance());
         if (mPresenter.getOpenFrom() == FROM_BOOKSHELF) {
+            if (mPresenter.getBookShelf() == null) return;
             updateView();
         } else {
             if (mPresenter.getSearchBook() == null) return;
@@ -156,6 +157,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
     @Override
     public void updateView() {
         bookShelfBean = mPresenter.getBookShelf();
+        SearchBookBean searchBookBean = mPresenter.getSearchBook();
         BookInfoBean bookInfoBean;
         if (null != bookShelfBean) {
             if (BookShelfBean.LOCAL_TAG.equals(bookShelfBean.getTag())) {
@@ -163,7 +165,15 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             } else {
                 ivMenu.setVisibility(View.VISIBLE);
             }
+
             bookInfoBean = bookShelfBean.getBookInfoBean();
+            if (!TextUtils.isEmpty(bookShelfBean.getCustomCoverPath())) {
+                upImageView(bookShelfBean.getCustomCoverPath());
+            } else if(!Objects.equals(bookInfoBean.getCoverUrl(), searchBookBean.getCoverUrl()) && !TextUtils.isEmpty(searchBookBean.getCoverUrl())){
+                upImageView(searchBookBean.getCoverUrl());
+            }else {
+                upImageView(bookInfoBean.getCoverUrl());
+            }
             tvName.setText(bookInfoBean.getName());
             author = bookInfoBean.getAuthor();
             tvAuthor.setText(TextUtils.isEmpty(author) ? "未知" : author);
@@ -199,14 +209,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                 ivWeb.setVisibility(View.INVISIBLE);
                 tvOrigin.setVisibility(View.INVISIBLE);
             }
-            SearchBookBean searchBookBean = mPresenter.getSearchBook();
-            if (!TextUtils.isEmpty(bookShelfBean.getCustomCoverPath())) {
-                upImageView(bookShelfBean.getCustomCoverPath());
-            } else if(!Objects.equals(bookInfoBean.getCoverUrl(), searchBookBean.getCoverUrl()) && !TextUtils.isEmpty(searchBookBean.getCoverUrl())){
-                upImageView(searchBookBean.getCoverUrl());
-            }else {
-                upImageView(bookInfoBean.getCoverUrl());
-            }
+
             if (bookShelfBean.getTag().equals(BookShelfBean.LOCAL_TAG)) {
                 tvChangeOrigin.setVisibility(View.INVISIBLE);
             } else {

@@ -12,6 +12,7 @@ import com.kunfei.bookshelf.bean.SearchBookBean;
 import com.kunfei.bookshelf.model.BookSourceManager;
 import com.kunfei.bookshelf.model.analyzeRule.AnalyzeHeaders;
 import com.kunfei.bookshelf.model.analyzeRule.AnalyzeUrl;
+import com.kunfei.bookshelf.model.impl.IStationBookModel;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,14 +23,14 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 
 import io.reactivex.Observable;
-
+import com.kunfei.bookshelf.model.impl.IStationBookModel;
 import static android.text.TextUtils.isEmpty;
 import static com.kunfei.bookshelf.constant.AppConstant.JS_PATTERN;
 
 /**
  * 默认检索规则
  */
-public class WebBook extends BaseModelImpl {
+public class WebBook extends BaseModelImpl implements IStationBookModel {
     private String tag;
     private String name;
     private BookSourceBean bookSourceBean;

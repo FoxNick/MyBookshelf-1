@@ -340,6 +340,10 @@ public class StringUtils {
         return stringBuilder.toString();
     }
 
+    public static String valueOf(Object object) {
+        return object == null ? "" : object.toString();
+    }
+
     public static String removeUTFCharacters(String data) {
         if (data == null) return null;
         Pattern p = Pattern.compile("\\\\u(\\p{XDigit}{4})");
@@ -352,7 +356,9 @@ public class StringUtils {
         m.appendTail(buf);
         return buf.toString();
     }
-
+    public static boolean isBlank(String text) {
+        return trim(text).length() == 0;
+    }
     public static String formatHtml(String html) {
         if (TextUtils.isEmpty(html)) return "";
         return html.replaceAll("(?i)<(br[\\s/]*|/*p.*?|/*div.*?)>", "\n")// 替换特定标签为换行符

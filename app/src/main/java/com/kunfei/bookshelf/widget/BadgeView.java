@@ -17,6 +17,7 @@ import android.widget.TabWidget;
 import androidx.appcompat.widget.AppCompatTextView;
 
 import com.kunfei.bookshelf.R;
+import com.kunfei.bookshelf.utils.theme.ThemeStore;
 
 
 /**
@@ -26,7 +27,7 @@ public class BadgeView extends AppCompatTextView {
 
     private boolean mHideOnNull = true;
     private float radius;
-
+    private int highlightColor;
     public BadgeView(Context context) {
         this(context, null);
     }
@@ -38,10 +39,10 @@ public class BadgeView extends AppCompatTextView {
     public BadgeView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
-        init();
+        init(context);
     }
 
-    private void init() {
+    private void init(Context context) {
         if (!(getLayoutParams() instanceof LayoutParams)) {
             LayoutParams layoutParams =
                     new LayoutParams(
@@ -58,6 +59,7 @@ public class BadgeView extends AppCompatTextView {
         setPadding(dip2Px(5), dip2Px(1), dip2Px(5), dip2Px(1));
         radius = 8;
 
+        highlightColor = ThemeStore.accentColor(context);
         // set default background
         setBackground(radius, Color.parseColor("#d3321b"));
 
@@ -120,7 +122,7 @@ public class BadgeView extends AppCompatTextView {
     }
 
     public void setHighlight(boolean highlight) {
-        setBackground(getResources().getColor(highlight ? R.color.highlight : R.color.darker_gray));
+        setBackground(highlight ? highlightColor : getResources().getColor(R.color.darker_gray));
     }
 
     public Integer getBadgeCount() {

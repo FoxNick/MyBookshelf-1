@@ -27,4 +27,6 @@ public class RxBusTag {
     public final static String PRINT_DEBUG_LOG = "printDebugLog";
     public final static String AUDIO_SIZE = "audioSize";
     public final static String AUDIO_DUR = "audioDur";
+    public final static String SOURCE_LIST_CHANGE = "sourceListChange";
+    public final static String FIND_LIST_CHANGE = "findListChange";
 }
