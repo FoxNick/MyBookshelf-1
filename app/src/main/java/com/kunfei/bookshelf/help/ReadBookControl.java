@@ -66,7 +66,7 @@ public class ReadBookControl {
     private int tipPaddingBottom;
     private float textLetterSpacing;
     private boolean canSelectText;
-
+    private int progressDisplay;
     private SharedPreferences preferences;
 
     private static ReadBookControl readBookControl;
@@ -102,6 +102,7 @@ public class ReadBookControl {
                 ? 50 : preferences.getInt("clickSensitivity", 50);
         this.clickAllNext = preferences.getBoolean("clickAllNext", false);
         this.fontPath = preferences.getString("fontPath", null);
+        this.progressDisplay = preferences.getInt("progressDisplay", 0);
         this.textConvert = preferences.getInt("textConvertInt", 0);
         this.textBold = preferences.getBoolean("textBold", false);
         this.speechRate = preferences.getInt("speechRate", 10);
@@ -800,6 +801,19 @@ public class ReadBookControl {
         return value;
     }
 
+
+    public int getProgressDisplay()
+    {
+        return this.progressDisplay;
+    }
+
+    public void setProgressDisplay(int paramInt)
+    {
+        this.progressDisplay = paramInt;
+        this.preferences.edit()
+            .putInt("progressDisplay", paramInt)
+            .apply();
+    }
     public boolean disableScrollClickTurn() {
         return preferences.getBoolean("disableScrollClickTurn", false);
     }

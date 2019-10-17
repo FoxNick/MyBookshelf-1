@@ -14,6 +14,7 @@ import com.kunfei.bookshelf.R;
 import com.kunfei.bookshelf.base.observer.MyObserver;
 import com.kunfei.bookshelf.bean.BookChapterBean;
 import com.kunfei.bookshelf.bean.BookShelfBean;
+import com.kunfei.bookshelf.help.ChapterContentHelp;
 import com.kunfei.bookshelf.utils.theme.ThemeStore;
 
 import java.util.ArrayList;
@@ -111,8 +112,11 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
         } else {
             holder.tvName.setTextColor(normalColor);
         }
-
-        holder.tvName.setText(bookChapterBean.getDurChapterName());
+        String DurChapterName = ChapterContentHelp.getInstance().replaceContent(bookShelfBean.getBookInfoBean().getName(),
+                bookShelfBean.getTag(),
+                bookChapterBean.getDurChapterName(),
+                bookShelfBean.getReplaceEnable(),true);
+        holder.tvName.setText(DurChapterName);
         if (Objects.equals(bookShelfBean.getTag(), BookShelfBean.LOCAL_TAG) || bookChapterBean.getHasCache(bookShelfBean.getBookInfoBean())) {
             holder.tvName.setSelected(true);
             holder.tvName.getPaint().setFakeBoldText(true);

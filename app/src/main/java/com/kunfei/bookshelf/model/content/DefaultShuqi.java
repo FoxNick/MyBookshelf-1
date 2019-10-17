@@ -10,7 +10,6 @@ import com.kunfei.bookshelf.MApplication;
 import com.kunfei.bookshelf.R;
 import com.kunfei.bookshelf.base.BaseModelImpl;
 
-import com.kunfei.bookshelf.bean.BaseBookBean;
 import com.kunfei.bookshelf.bean.BaseChapterBean;
 import com.kunfei.bookshelf.bean.BookContentBean;
 import com.kunfei.bookshelf.bean.BookInfoBean;
@@ -20,7 +19,6 @@ import com.kunfei.bookshelf.bean.BookChapterBean;
 import com.kunfei.bookshelf.bean.SearchBookBean;
 
 
-import com.kunfei.bookshelf.constant.BookType;
 import com.kunfei.bookshelf.model.BookSourceManager;
 
 import com.kunfei.bookshelf.model.analyzeRule.AnalyzeHeaders;
@@ -47,8 +45,6 @@ import java.util.regex.Pattern;
 
 import io.reactivex.Observable;
 import retrofit2.Response;
-
-import static android.text.TextUtils.isEmpty;
 
 public class DefaultShuqi extends BaseModelImpl implements IStationBookModel {
     private static final String TAG = DefaultShuqi.class.getSimpleName();

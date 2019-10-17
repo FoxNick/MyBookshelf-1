@@ -828,7 +828,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                         actionBar.setTitle(mPresenter.getBookShelf().getBookInfoBean().getName());
                         if (mPresenter.getBookShelf().getChapterListSize() > 0) {
                             tvChapterName.setVisibility(View.VISIBLE);
-                            tvChapterName.setText(mPresenter.getChapterList().get(pos).getDurChapterName());
+                            String DurChapterName = ChapterContentHelp.getInstance().replaceContent(mPresenter.getBookShelf().getBookInfoBean().getName(),
+                                    mPresenter.getBookShelf().getTag(),
+                                    mPresenter.getChapterList().get(pos).getDurChapterName(),
+                                    mPresenter.getBookShelf().getReplaceEnable(),true);
+                            tvChapterName.setText(DurChapterName);
                             tvUrl.setVisibility(View.VISIBLE);
                             tvUrl.setText(NetworkUtils.getAbsoluteURL(mPresenter.getBookShelf().getBookInfoBean().getChapterUrl(),
                                     mPresenter.getChapterList().get(pos).getDurChapterUrl()));
@@ -1476,7 +1480,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                     ChapterContentHelp.getInstance().replaceContent(mPresenter.getBookShelf().getBookInfoBean().getName(),
                             mPresenter.getBookShelf().getTag(),
                             mPresenter.getBookShelf().getDurChapterName(),
-                            mPresenter.getBookShelf().getReplaceEnable()),
+                            mPresenter.getBookShelf().getReplaceEnable(), true),
                     mPresenter.getBookShelf().isAudio(),
                     mPresenter.getBookShelf().getDurChapterPage());
         }

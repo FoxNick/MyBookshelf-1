@@ -33,7 +33,7 @@ public class BookChapterBean implements Cloneable, BaseChapterBean {
 
     @Generated(hash = 304828234)
     public BookChapterBean(String tag, String noteUrl, int durChapterIndex, String durChapterUrl, String durChapterName,
-                           Long start, Long end) {
+            Long start, Long end) {
         this.tag = tag;
         this.noteUrl = noteUrl;
         this.durChapterIndex = durChapterIndex;
@@ -89,7 +89,7 @@ public class BookChapterBean implements Cloneable, BaseChapterBean {
 
     @Override
     public String getDurChapterName() {
-        return this.durChapterName;
+        return durChapterName;
     }
 
     public void setDurChapterName(String durChapterName) {

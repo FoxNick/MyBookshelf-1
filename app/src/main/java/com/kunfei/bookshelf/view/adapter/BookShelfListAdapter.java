@@ -29,6 +29,7 @@ import com.kunfei.bookshelf.R;
 import com.kunfei.bookshelf.bean.BookInfoBean;
 import com.kunfei.bookshelf.bean.BookShelfBean;
 import com.kunfei.bookshelf.help.BookshelfHelp;
+import com.kunfei.bookshelf.help.ChapterContentHelp;
 import com.kunfei.bookshelf.help.ItemTouchCallback;
 import com.kunfei.bookshelf.utils.theme.ThemeStore;
 import com.kunfei.bookshelf.view.adapter.base.OnItemClickListenerTwo;
@@ -181,8 +182,16 @@ public class BookShelfListAdapter extends RecyclerView.Adapter<BookShelfListAdap
         }
         holder.tvName.setText(bookInfoBean.getName());
         holder.tvAuthor.setText(bookInfoBean.getAuthor());
-        holder.tvRead.setText(bookShelfBean.getDurChapterName());
-        holder.tvLast.setText(bookShelfBean.getLastChapterName());
+        String DurChapterName = ChapterContentHelp.getInstance().replaceContent(bookShelfBean.getBookInfoBean().getName(),
+                bookShelfBean.getTag(),
+                bookShelfBean.getDurChapterName(),
+                bookShelfBean.getReplaceEnable(),true);
+        holder.tvRead.setText(DurChapterName);
+        String LastChapterName = ChapterContentHelp.getInstance().replaceContent(bookShelfBean.getBookInfoBean().getName(),
+                bookShelfBean.getTag(),
+                bookShelfBean.getLastChapterName(),
+                bookShelfBean.getReplaceEnable(),true);
+        holder.tvLast.setText(LastChapterName);
         holder.ivCover.setOnClickListener(v -> {
             if (itemClickListener != null)
                 itemClickListener.onClick(v, index);

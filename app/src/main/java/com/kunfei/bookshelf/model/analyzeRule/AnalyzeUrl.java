@@ -254,10 +254,15 @@ public class AnalyzeUrl {
     /**
      * 执行JS
      */
-    private Object evalJS(String jsStr, Object result) throws Exception {
-        SimpleBindings bindings = new SimpleBindings();
-        bindings.put("result", result);
-        return SCRIPT_ENGINE.eval(jsStr, bindings);
+    private Object evalJS(String jsStr, Object result) {
+        try {
+            SimpleBindings bindings = new SimpleBindings();
+            bindings.put("result", result);
+            return SCRIPT_ENGINE.eval(jsStr, bindings);
+        } catch (Exception e) {
+            //Logger.e(TAG, jsStr, e);
+        }
+        return null;
     }
 
     public String getHost() {

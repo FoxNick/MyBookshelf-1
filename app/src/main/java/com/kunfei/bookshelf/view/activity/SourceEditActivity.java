@@ -20,7 +20,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-
+import org.jetbrains.annotations.NotNull;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -60,6 +60,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -81,7 +82,7 @@ import static android.text.TextUtils.isEmpty;
  * 编辑书源
  */
 
-public class SourceEditActivity extends MBaseActivity<SourceEditContract.Presenter> implements SourceEditContract.View {
+public class SourceEditActivity extends MBaseActivity<SourceEditContract.Presenter> implements SourceEditContract.View, KeyboardToolPop.CallBack {
     public final static int EDIT_SOURCE = 1101;
     private final int REQUEST_QR = 202;
 
@@ -113,6 +114,8 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
     private PopupWindow mSoftKeyboardTool;
     private boolean mIsSoftKeyBoardShowing = false;
     private boolean showFind;
+    private String[] keyHelp = {"@", "&", "|", "%", "/", "\\", ":", "$", ".", "*", "#", "!", "+", "[", "]", "{", "}", "<", ">",
+            "href", "img", "src", "textNodes", "xpath", "json", "css", "id", "class", "tag"};
 
     public static void startThis(Object object, BookSourceBean sourceBean) {
         String key = String.valueOf(System.currentTimeMillis());
@@ -190,7 +193,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         ButterKnife.bind(this);
         this.setSupportActionBar(toolbar);
         setupActionBar();
-        mSoftKeyboardTool = new KeyboardToolPop(this, this::insertTextToEditText);
+        mSoftKeyboardTool = new KeyboardToolPop(this, Arrays.asList(keyHelp), this);
         getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(new KeyboardOnGlobalChangeListener());
         adapter = new SourceEditAdapter(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -663,7 +666,8 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         return false;
     }
 
-    private void insertTextToEditText(String txt) {
+    @Override
+    public void sendText(@NotNull String txt) {
         if (isEmpty(txt)) return;
         View view = getWindow().getDecorView().findFocus();
         if (view instanceof EditText) {

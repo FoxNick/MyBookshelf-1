@@ -4,7 +4,11 @@ import android.text.TextUtils;
 
 import com.kunfei.bookshelf.bean.ReplaceRuleBean;
 import com.kunfei.bookshelf.model.ReplaceRuleManager;
+import com.kunfei.bookshelf.utils.StringUtils;
 import com.luhuiguo.chinese.ChineseUtils;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ChapterContentHelp {
     private static ChapterContentHelp instance;
@@ -36,14 +40,32 @@ public class ChapterContentHelp {
     /**
      * 替换净化
      */
-    public String replaceContent(String bookName, String bookTag, String content, Boolean replaceEnable) {
+    public String replaceContent(String bookName, String bookTag, String content, Boolean replaceEnable, Boolean replaceTitle) {
         if (!replaceEnable) return toTraditional(content);
         if (ReplaceRuleManager.getEnabled().size() == 0) return toTraditional(content);
         //替换
         for (ReplaceRuleBean replaceRule : ReplaceRuleManager.getEnabled()) {
             if (isUseTo(replaceRule.getUseTo(), bookTag, bookName)) {
                 try {
-                    content = content.replaceAll(replaceRule.getFixedRegex(), replaceRule.getReplacement());
+                    if(replaceTitle){
+                        content = StringUtils.trim(StringUtils.fullToHalf(content)
+                                .replace("(", "（")
+                                .replace(")", "）")
+                                .replaceAll("[\\[\\]【】]+", "")
+                                .replaceAll("\\s+", " "));
+                        Pattern pattern = Pattern.compile(replaceRule.getFixedRegex(), Pattern.MULTILINE);
+                        Matcher matcher = pattern.matcher(content);
+                        if (matcher.find()) {
+                            int num = StringUtils.stringToInt(matcher.group(2));
+                            if (num > 0) {
+                                content = matcher.replaceFirst("第" + num + "章 ");
+                                break;
+                            }
+                        }
+                    } else {
+                        content = content.replaceAll(replaceRule.getFixedRegex(), replaceRule.getReplacement());
+                    }
+
                 } catch (Exception ignored) {
                 }
             }

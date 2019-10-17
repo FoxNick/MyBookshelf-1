@@ -98,7 +98,7 @@ public abstract class PageLoader {
     private int tipMarginBottom;
     private int oneSpPx;
     //标题的大小
-    private int mTitleSize;
+    private float mTitleSize;
     //字体的大小
     private int mTextSize;
     private int mTextEndSize;
@@ -133,10 +133,14 @@ public abstract class PageLoader {
     private boolean resetReadAloud; //是否重新朗读
     private int readAloudParagraph; //正在朗读章节
 
+    private int progressDisplay;
+
     Bitmap cover;
     private int linePos = 0;
     private boolean isLastPage = false;
 
+    int mFirstPageMarginButtom = 50;
+    int mFirstPageMarginTop = 100;
     CompositeDisposable compositeDisposable;
     //翻页时间
     private long skipPageTime = 0;
@@ -162,6 +166,7 @@ public abstract class PageLoader {
 
     private void initData() {
         // 获取配置参数
+        this.progressDisplay = this.readBookControl.getProgressDisplay();
         hideStatusBar = readBookControl.getHideStatusBar();
         showTimeBattery = hideStatusBar && readBookControl.getShowTimeBattery();
         mPageMode = PageAnimation.Mode.getPageMode(readBookControl.getPageMode());
@@ -218,7 +223,7 @@ public abstract class PageLoader {
     private void setUpTextParams() {
         // 文字大小
         mTextSize = ScreenUtils.spToPx(readBookControl.getTextSize());
-        mTitleSize = mTextSize + oneSpPx;
+        mTitleSize = mTextSize * 1.25f + oneSpPx;
         mTextEndSize = mTextSize - oneSpPx;
         // 行间距(大小为字体的一半)
         mTextInterval = (int) (mTextSize * readBookControl.getLineMultiplier() / 2);
@@ -249,7 +254,8 @@ public abstract class PageLoader {
         mTipPaint.setColor(readBookControl.getTextColor());
         mTipPaint.setTextAlign(Paint.Align.LEFT); // 绘制的起始点
         mTipPaint.setTextSize(ScreenUtils.spToPx(DEFAULT_TIP_SIZE)); // Tip默认的字体大小
-        mTipPaint.setTypeface(Typeface.create(typeface, Typeface.NORMAL));
+        int bold = readBookControl.getTextBold() ? Typeface.BOLD : Typeface.NORMAL;
+        mTipPaint.setTypeface(Typeface.create(typeface, bold));
         mTipPaint.setAntiAlias(true);
         mTipPaint.setSubpixelText(true);
 
@@ -257,12 +263,12 @@ public abstract class PageLoader {
         mTitlePaint = new TextPaint();
         mTitlePaint.setColor(readBookControl.getTextColor());
         mTitlePaint.setTextSize(mTitleSize);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mTitlePaint.setLetterSpacing(readBookControl.getTextLetterSpacing());
-        }
+        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        //    mTitlePaint.setLetterSpacing(readBookControl.getTextLetterSpacing());
+        //}
         mTitlePaint.setStyle(Paint.Style.FILL_AND_STROKE);
         mTitlePaint.setTypeface(Typeface.create(typeface, Typeface.BOLD));
-        mTitlePaint.setTextAlign(Paint.Align.CENTER);
+        //mTitlePaint.setTextAlign(Paint.Align.CENTER);
         mTitlePaint.setAntiAlias(true);
 
         // 绘制页面内容的画笔
@@ -272,7 +278,7 @@ public abstract class PageLoader {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mTextPaint.setLetterSpacing(readBookControl.getTextLetterSpacing());
         }
-        int bold = readBookControl.getTextBold() ? Typeface.BOLD : Typeface.NORMAL;
+        bold = readBookControl.getTextBold() ? Typeface.BOLD : Typeface.NORMAL;
         mTextPaint.setTypeface(Typeface.create(typeface, bold));
         mTextPaint.setAntiAlias(true);
 
@@ -837,12 +843,20 @@ public abstract class PageLoader {
         if (canvas == null) return;
         if (!callback.getChapterList().isEmpty()) {
             String title = callback.getChapterList().size() > txtChapter.getPosition() ? callback.getChapterList().get(txtChapter.getPosition()).getDurChapterName() : "";
-            title = ChapterContentHelp.getInstance().replaceContent(book.getBookInfoBean().getName(), book.getTag(), title, book.getReplaceEnable());
+            title = ChapterContentHelp.getInstance().replaceContent(this.book.getBookInfoBean().getName(), this.book.getTag(), title, this.book.getReplaceEnable(),true);
+            if ((txtPage != null) && (txtPage.getPosition() == 0) && readBookControl.getShowTitle()) {
+                title = this.book.getBookInfoBean().getName();
+            }
             String page = (txtChapter.getStatus() != TxtChapter.Status.FINISH || txtPage == null) ? ""
                     : String.format("%d/%d", txtPage.getPosition() + 1, txtChapter.getPageSize());
-            String progress = (txtChapter.getStatus() != TxtChapter.Status.FINISH) ? ""
-                    : BookshelfHelp.getReadProgress(mCurChapterPos, book.getChapterListSize(), mCurPagePos, curChapter().txtChapter.getPageSize());
-
+            String progress = "";
+            if(this.progressDisplay == 0) {
+                progress = (txtChapter.getStatus() != TxtChapter.Status.FINISH) ? ""
+                        : (txtChapter.getPosition() + 1) + "/" + this.book.getChapterListSize() + "章";
+            }else if (this.progressDisplay == 1) {
+                progress = (txtChapter.getStatus() != TxtChapter.Status.FINISH) ? ""
+                        : BookshelfHelp.getReadProgress(mCurChapterPos, book.getChapterListSize(), mCurPagePos, curChapter().txtChapter.getPageSize());
+            }
             float tipBottom;
             float tipLeft;
             //初始化标题的参数
@@ -974,10 +988,16 @@ public abstract class PageLoader {
                 mTitlePaint.setColor(isLight ? ThemeStore.accentColor(mContext) : readBookControl.getTextColor());
 
                 //进行绘制
-                canvas.drawText(str, mDisplayWidth / 2f, top, mTitlePaint);
+                if (i == 0) {
+                    top += this.mFirstPageMarginTop;
+                }
+                canvas.drawText(str, mMarginLeft, top, mTitlePaint);
 
                 //pzl
-                float leftposition = mDisplayWidth / 2;
+                if (i == txtPage.getTitleLines() - 1) {
+                    top += this.mFirstPageMarginButtom;
+                }
+                float leftposition = mMarginLeft;
                 float rightposition = 0;
                 float bottomposition = top + mTitlePaint.getFontMetrics().descent;
                 float TextHeight = Math.abs(fontMetricsForTitle.ascent) + Math.abs(fontMetricsForTitle.descent);

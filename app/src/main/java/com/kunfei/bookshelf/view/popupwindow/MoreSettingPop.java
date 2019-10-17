@@ -53,6 +53,10 @@ public class MoreSettingPop extends FrameLayout {
     LinearLayout llScreenTimeOut;
     @BindView(R.id.tv_screen_time_out)
     TextView tvScreenTimeOut;
+    @BindView(R.id.tvJDConvert)
+    TextView tvJDConvert;
+    @BindView(R.id.llJDConvert)
+    LinearLayout llJDConvert;
     @BindView(R.id.tvJFConvert)
     TextView tvJFConvert;
     @BindView(R.id.llJFConvert)
@@ -198,6 +202,19 @@ public class MoreSettingPop extends FrameLayout {
             dialog.show();
             ATH.setAlertDialogTint(dialog);
         });
+        llJDConvert.setOnClickListener(view -> {
+            AlertDialog dialog = new AlertDialog.Builder(context)
+                    .setTitle(context.getString(R.string.jd_convert))
+                    .setSingleChoiceItems(context.getResources().getStringArray(R.array.convert_jd), readBookControl.getProgressDisplay(), (dialogInterface, i) -> {
+                        readBookControl.setProgressDisplay(i);
+                        upDConvert(i);
+                        dialogInterface.dismiss();
+                        callback.refreshPage();
+                    })
+                    .create();
+            dialog.show();
+            ATH.setAlertDialogTint(dialog);
+        });
         llJFConvert.setOnClickListener(view -> {
             AlertDialog dialog = new AlertDialog.Builder(context)
                     .setTitle(context.getString(R.string.jf_convert))
@@ -247,6 +264,7 @@ public class MoreSettingPop extends FrameLayout {
     private void initData() {
         upScreenDirection(readBookControl.getScreenDirection());
         upScreenTimeOut(readBookControl.getScreenTimeOut());
+        upDConvert(readBookControl.getProgressDisplay());
         upFConvert(readBookControl.getTextConvert());
         upNavBarColor(readBookControl.getNavBarColor());
         sbImmersionStatusBar.setChecked(readBookControl.getImmersionStatusBar());
@@ -294,7 +312,9 @@ public class MoreSettingPop extends FrameLayout {
     private void upScreenTimeOut(int screenTimeOut) {
         tvScreenTimeOut.setText(context.getResources().getStringArray(R.array.screen_time_out)[screenTimeOut]);
     }
-
+    private void upDConvert(int dConvert) {
+        tvJDConvert.setText(context.getResources().getStringArray(R.array.convert_jd)[dConvert]);
+    }
     private void upFConvert(int fConvert) {
         tvJFConvert.setText(context.getResources().getStringArray(R.array.convert_s)[fConvert]);
     }

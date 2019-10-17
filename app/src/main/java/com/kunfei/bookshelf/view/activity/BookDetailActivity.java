@@ -36,6 +36,7 @@ import com.kunfei.bookshelf.bean.SearchBookBean;
 import com.kunfei.bookshelf.constant.RxBusTag;
 import com.kunfei.bookshelf.help.BlurTransformation;
 import com.kunfei.bookshelf.help.BookshelfHelp;
+import com.kunfei.bookshelf.help.ChapterContentHelp;
 import com.kunfei.bookshelf.model.BookSourceManager;
 import com.kunfei.bookshelf.presenter.BookDetailPresenter;
 import com.kunfei.bookshelf.presenter.ReadBookPresenter;
@@ -179,7 +180,11 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             tvAuthor.setText(TextUtils.isEmpty(author) ? "未知" : author);
             ((RadioButton) rgBookGroup.getChildAt(bookShelfBean.getGroup())).setChecked(true);
             if (mPresenter.getInBookShelf()) {
-                tvChapter.setText(bookShelfBean.getDurChapterName()); // last
+                String DurChapterName = ChapterContentHelp.getInstance().replaceContent(bookShelfBean.getBookInfoBean().getName(),
+                        bookShelfBean.getTag(),
+                        bookShelfBean.getDurChapterName(),
+                        bookShelfBean.getReplaceEnable(),true);
+                tvChapter.setText(DurChapterName); // last
                 tvShelf.setText(R.string.remove_from_bookshelf);
                 tvRead.setText(R.string.continue_read);
                 tvShelf.setOnClickListener(v -> {
@@ -188,7 +193,11 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                 });
             } else {
                 if (!TextUtils.isEmpty(bookShelfBean.getLastChapterName())) {
-                    tvChapter.setText(bookShelfBean.getLastChapterName()); // last
+                    String LastChapterName = ChapterContentHelp.getInstance().replaceContent(bookShelfBean.getBookInfoBean().getName(),
+                            bookShelfBean.getTag(),
+                            bookShelfBean.getLastChapterName(),
+                            bookShelfBean.getReplaceEnable(),true);
+                    tvChapter.setText(LastChapterName); // last
                 }
                 tvShelf.setText(R.string.add_to_shelf);
                 tvRead.setText(R.string.start_read);

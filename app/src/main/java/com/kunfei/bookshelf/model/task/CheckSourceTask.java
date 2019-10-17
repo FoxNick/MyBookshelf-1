@@ -139,11 +139,16 @@ public class CheckSourceTask {
     /**
      * 执行JS
      */
-    private Object evalJS(String jsStr, String baseUrl) throws Exception {
+    private Object evalJS(String jsStr, String baseUrl){
+        try {
         SimpleBindings bindings = new SimpleBindings();
         bindings.put("java", new AnalyzeRule(null));
         bindings.put("baseUrl", baseUrl);
         return SCRIPT_ENGINE.eval(jsStr, bindings);
+        } catch (Exception e) {
+            //Logger.e(TAG, jsStr, e);
+        }
+        return null;
     }
 
 }

@@ -232,6 +232,10 @@
     <string name="progress_show">进度 %d/%d</string>
     <string name="tts_fix">请安装并选择中文TTS!</string>
     <string name="tts_init_failed">TTS初始化失败!</string>
+    <string name="jd_convert">进度显示</string>
+    <string name="jd_convert_o">不显示进度</string>
+    <string name="jd_convert_z">显示章节</string>
+    <string name="jd_convert_b">显示百分比</string>
     <string name="jf_convert">简繁转换</string>
     <string name="jf_convert_o">关闭</string>
     <string name="jf_convert_f">简转繁</string>

@@ -14,6 +14,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.kunfei.bookshelf.R;
 import com.kunfei.bookshelf.bean.BookKindBean;
 import com.kunfei.bookshelf.bean.SearchBookBean;
+import com.kunfei.bookshelf.help.ChapterContentHelp;
 import com.kunfei.bookshelf.utils.StringUtils;
 import com.kunfei.bookshelf.widget.CoverImageView;
 import com.kunfei.bookshelf.widget.recycler.refresh.RefreshRecyclerViewAdapter;
@@ -88,7 +89,11 @@ public class ChoiceBookAdapter extends RefreshRecyclerViewAdapter {
             myViewHolder.tvOrigin.setText(activity.getString(R.string.origin_format, searchBooks.get(position).getOrigin()));
         }
         //最新章节/简介
-        final String lastChapter = searchBooks.get(position).getLastChapter();
+        final String lastChapter = ChapterContentHelp.getInstance().replaceContent(searchBooks.get(position).getName(),
+                searchBooks.get(position).getTag(),
+                searchBooks.get(position).getLastChapter(),
+                true,true);
+        //final String lastChapter = searchBooks.get(position).getLastChapter();
         String desc = !StringUtils.isBlank(lastChapter) ? lastChapter
                 : !StringUtils.isBlank(searchBooks.get(position).getIntroduce()) ? searchBooks.get(position).getIntroduce() : "";
         if (isTrimEmpty(StringUtils.trim(desc))) {

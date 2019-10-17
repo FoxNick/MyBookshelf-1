@@ -517,11 +517,16 @@ public class AnalyzeRule {
      * 执行JS
      */
     private Object evalJS(String jsStr, Object result) throws Exception {
-        SimpleBindings bindings = new SimpleBindings();
-        bindings.put("java", this);
-        bindings.put("result", result);
-        bindings.put("baseUrl", baseUrl);
-        return SCRIPT_ENGINE.eval(jsStr, bindings);
+        try {
+            SimpleBindings bindings = new SimpleBindings();
+            bindings.put("java", this);
+            bindings.put("result", result);
+            bindings.put("baseUrl", baseUrl);
+            return SCRIPT_ENGINE.eval(jsStr, bindings);
+        } catch (Exception e) {
+            //Logger.e(TAG, jsStr, e);
+        }
+        return null;
     }
 
     /**

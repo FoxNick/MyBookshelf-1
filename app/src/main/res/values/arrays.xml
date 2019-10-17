@@ -34,6 +34,12 @@
         <item>@string/jf_convert_f</item>
     </string-array>
 
+    <string-array name="convert_jd">
+        <item>@string/jd_convert_z</item>
+        <item>@string/jd_convert_b</item>
+        <item>@string/jd_convert_o</item>
+    </string-array>
+
     <string-array name="NavBarColors">
         <item>自动</item>
         <item>黑色</item>
