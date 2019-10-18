@@ -843,7 +843,7 @@ public abstract class PageLoader {
         if (canvas == null) return;
         if (!callback.getChapterList().isEmpty()) {
             String title = callback.getChapterList().size() > txtChapter.getPosition() ? callback.getChapterList().get(txtChapter.getPosition()).getDurChapterName() : "";
-            title = ChapterContentHelp.getInstance().replaceContent(this.book.getBookInfoBean().getName(), this.book.getTag(), title, this.book.getReplaceEnable(),true);
+            title = ChapterContentHelp.getInstance().replaceContent(this.book.getBookInfoBean().getName(), this.book.getTag(), title, true,true);
             if ((txtPage != null) && (txtPage.getPosition() == 0) && readBookControl.getShowTitle()) {
                 title = this.book.getBookInfoBean().getName();
             }

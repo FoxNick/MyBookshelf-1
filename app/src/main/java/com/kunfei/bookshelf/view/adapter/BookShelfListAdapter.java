@@ -185,12 +185,12 @@ public class BookShelfListAdapter extends RecyclerView.Adapter<BookShelfListAdap
         String DurChapterName = ChapterContentHelp.getInstance().replaceContent(bookShelfBean.getBookInfoBean().getName(),
                 bookShelfBean.getTag(),
                 bookShelfBean.getDurChapterName(),
-                bookShelfBean.getReplaceEnable(),true);
+                true,true);
         holder.tvRead.setText(DurChapterName);
         String LastChapterName = ChapterContentHelp.getInstance().replaceContent(bookShelfBean.getBookInfoBean().getName(),
                 bookShelfBean.getTag(),
                 bookShelfBean.getLastChapterName(),
-                bookShelfBean.getReplaceEnable(),true);
+                true,true);
         holder.tvLast.setText(LastChapterName);
         holder.ivCover.setOnClickListener(v -> {
             if (itemClickListener != null)

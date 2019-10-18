@@ -143,7 +143,7 @@ public class ChapterListFragment extends MBaseFragment {
             String DurChapterName = ChapterContentHelp.getInstance().replaceContent(bookShelf.getBookInfoBean().getName(),
                     bookShelf.getTag(),
                     bookShelf.getDurChapterName(),
-                    bookShelf.getReplaceEnable(),true);
+                    true,true);
             if (chapterListAdapter.getItemCount() == 0) {
                 tvChapterInfo.setText(DurChapterName);
             } else {

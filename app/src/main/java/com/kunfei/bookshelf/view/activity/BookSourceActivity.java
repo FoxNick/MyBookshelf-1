@@ -1,6 +1,9 @@
 package com.kunfei.bookshelf.view.activity;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -39,6 +42,7 @@ import com.kunfei.bookshelf.utils.StringUtils;
 import com.kunfei.bookshelf.utils.theme.ATH;
 import com.kunfei.bookshelf.utils.theme.ThemeStore;
 import com.kunfei.bookshelf.view.adapter.BookSourceAdapter;
+import com.kunfei.bookshelf.widget.PromptDialog;
 import com.kunfei.bookshelf.widget.filepicker.picker.FilePicker;
 import com.kunfei.bookshelf.widget.modialog.InputDialog;
 
@@ -49,7 +53,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import kotlin.Unit;
-
+import com.kunfei.bookshelf.widget.PromptDialog.OnPositiveListener;
 /**
  * Created by GKF on 2017/12/16.
  * 书源管理
@@ -107,6 +111,37 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ClipboardManager clipboardManager = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData primaryClip = clipboardManager != null ? clipboardManager.getPrimaryClip() : null;
+        if (primaryClip != null && primaryClip.getItemCount() > 0) {
+            String valueOf = String.valueOf(primaryClip.getItemAt(0).getText());
+            if (!TextUtils.isEmpty(valueOf)) {
+                String str = "默认书源@";
+                if (valueOf.startsWith(str)) {
+                    String[] split = valueOf.split(str);
+                    if (split.length > 1) {
+                        new PromptDialog(getContext())
+                                .setTitleText("温馨提示")
+                                .setContentText("亲爱的小主，我在剪贴板检测到书源合集链接！是否立即导入书源？")
+                                .setPositiveListener("立即导入", dialog -> {
+                                    dialog.dismiss();
+                                    ClipboardManager clipboardManager1 = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                                    ClipData newPlainText = ClipData.newPlainText(null, "");
+                                    if (clipboardManager1 != null) {
+                                        clipboardManager1.setPrimaryClip(newPlainText);
+                                    }
+                                    ACache.get(BookSourceActivity.this).put("sourceUrl", split[1]);
+                                    importBookSourceOnLine();
+                        }).show();
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -183,13 +218,21 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
     }
 
     private void selectAllDataS() {
-        for (BookSourceBean bookSourceBean : adapter.getDataList()) {
-            bookSourceBean.setEnable(!selectAll);
-        }
-        adapter.notifyDataSetChanged();
-        selectAll = !selectAll;
-        AsyncTask.execute(() -> DbHelper.getDaoSession().getBookSourceBeanDao().insertOrReplaceInTx(adapter.getDataList()));
-        setResult(RESULT_OK);
+        new PromptDialog(getContext())
+                .setDialogType(PromptDialog.DIALOG_TYPE_INFO)
+                .setAnimationEnable(true)
+                .setTitleText("温馨提示")
+                .setContentText("是否全选启用或者停用所显示的所有源，如果是误操作请点击空白处取消。")
+                .setPositiveListener("确认全选", dialog -> {
+                    dialog.dismiss();
+                    for (BookSourceBean bookSourceBean : adapter.getDataList()) {
+                        bookSourceBean.setEnable(!selectAll);
+                    }
+                    adapter.notifyDataSetChanged();
+                    selectAll = !selectAll;
+                    AsyncTask.execute(() -> DbHelper.getDaoSession().getBookSourceBeanDao().insertOrReplaceInTx(adapter.getDataList()));
+                    setResult(RESULT_OK);
+                }).show();
     }
 
     private void revertSelection() {
@@ -289,9 +332,6 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
             case R.id.action_import_book_source_onLine:
                 importBookSourceOnLine();
                 break;
-            case R.id.action_import_book_source_rwm:
-                scanBookSource();
-                break;
             case R.id.action_revert_selection:
                 revertSelection();
                 break;
@@ -353,10 +393,6 @@ public class BookSourceActivity extends MBaseActivity<BookSourceContract.Present
         return preferences.getInt("SourceSort", 0);
     }
 
-    private void scanBookSource() {
-        Intent intent = new Intent(this, QRCodeScanActivity.class);
-        startActivityForResult(intent, REQUEST_QR);
-    }
 
     private void addBookSource() {
         Intent intent = new Intent(this, SourceEditActivity.class);

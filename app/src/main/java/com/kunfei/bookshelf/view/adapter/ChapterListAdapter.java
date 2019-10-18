@@ -115,7 +115,7 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
         String DurChapterName = ChapterContentHelp.getInstance().replaceContent(bookShelfBean.getBookInfoBean().getName(),
                 bookShelfBean.getTag(),
                 bookChapterBean.getDurChapterName(),
-                bookShelfBean.getReplaceEnable(),true);
+                true,true);
         holder.tvName.setText(DurChapterName);
         if (Objects.equals(bookShelfBean.getTag(), BookShelfBean.LOCAL_TAG) || bookChapterBean.getHasCache(bookShelfBean.getBookInfoBean())) {
             holder.tvName.setSelected(true);

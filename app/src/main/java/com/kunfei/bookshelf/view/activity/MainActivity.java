@@ -2,12 +2,16 @@
 package com.kunfei.bookshelf.view.activity;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,12 +38,14 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+import com.google.gson.Gson;
 import com.hwangjr.rxbus.RxBus;
 import com.kunfei.bookshelf.BuildConfig;
 import com.kunfei.bookshelf.DbHelper;
 import com.kunfei.bookshelf.MApplication;
 import com.kunfei.bookshelf.R;
 import com.kunfei.bookshelf.base.BaseTabActivity;
+import com.kunfei.bookshelf.bean.BookSourceBean;
 import com.kunfei.bookshelf.constant.RxBusTag;
 import com.kunfei.bookshelf.help.FileHelp;
 import com.kunfei.bookshelf.help.ProcessTextHelp;
@@ -56,6 +62,7 @@ import com.kunfei.bookshelf.utils.theme.NavigationViewUtil;
 import com.kunfei.bookshelf.utils.theme.ThemeStore;
 import com.kunfei.bookshelf.view.fragment.BookListFragment;
 import com.kunfei.bookshelf.view.fragment.FindBookFragment;
+import com.kunfei.bookshelf.widget.PromptDialog;
 import com.kunfei.bookshelf.widget.modialog.InputDialog;
 import com.kunfei.bookshelf.widget.modialog.MoDialogHUD;
 
@@ -146,6 +153,34 @@ public class MainActivity extends BaseTabActivity<MainContract.Presenter> implem
                     .putString("shared_url", "")
                     .apply();
         }
+        ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clipData = clipboard != null ? clipboard.getPrimaryClip() : null;
+        if (clipData != null && clipData.getItemCount() > 0) {
+            String text = String.valueOf(clipData.getItemAt(0).getText());
+            if (!TextUtils.isEmpty(text) && text.contains("bookSourceName")) {
+                try {
+                    Gson gson = new Gson();
+                    BookSourceBean bookSourceBean = gson.fromJson(text, BookSourceBean.class);
+                    if (bookSourceBean != null && !TextUtils.isEmpty(bookSourceBean.getBookSourceUrl())) {
+                        new PromptDialog(getContext())
+                                .setDialogType(PromptDialog.DIALOG_TYPE_INFO)
+                                .setAnimationEnable(true)
+                                .setTitleText("温馨提示")
+                                .setContentText("剪贴板检测到小说源信息，是否立即导入保存？")
+                                .setPositiveListener("立即导入", dialog -> {
+                                    dialog.dismiss();
+                                    ClipboardManager clipboard1 = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                                    ClipData clipData1 = ClipData.newPlainText(null, "");
+                                    if (clipboard1 != null) {
+                                        clipboard1.setPrimaryClip(clipData1);
+                                    }
+                                    SourceEditActivity.startThis(getContext(), bookSourceBean);
+                                }).show();
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+        }
     }
 
 
@@ -218,6 +253,27 @@ public class MainActivity extends BaseTabActivity<MainContract.Presenter> implem
         //点击跳转搜索页
         cardSearch.setOnClickListener(view -> startActivityByAnim(new Intent(this, SearchBookActivity.class),
                 toolbar, "sharedView", android.R.anim.fade_in, android.R.anim.fade_out));
+        importSourceForFirstOpen();
+    }
+    private void importSourceForFirstOpen() {
+        String str = "isFirstOpen";
+        if (this.preferences.getBoolean(str, true)) {
+            this.preferences.edit().putBoolean("immersionStatusBar", true).apply();
+            RxBus.get().post(RxBusTag.IMMERSION_CHANGE, Boolean.valueOf(true));
+            this.preferences.edit().putBoolean(str, false).apply();
+            new PromptDialog(getContext())
+                    .setTitleText("温馨提示")
+                    .setContentText("亲爱的小主，好像这是您第一次见到我哦！您是否需要导入一些书源呢？书源来自第三方网站收集哦！")
+                    .setPositiveListener("立即导入", dialog -> {
+                            dialog.dismiss();
+                            ClipboardManager clipboardManager = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                            ClipData newPlainText = ClipData.newPlainText(null, "默认书源@https://foxnick.github.io");
+                            if (clipboardManager != null) {
+                               clipboardManager.setPrimaryClip(newPlainText);
+                            }
+                         BookSourceActivity.startThis(MainActivity.this, requestSource);
+            }).show();
+        }
     }
 
     //初始化TabLayout和ViewPager

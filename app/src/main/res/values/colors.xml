@@ -97,4 +97,16 @@
     <color name="ate_switch_thumb_disabled_dark">#FF424242</color>
     <!---->
     <color name="ate_navigation_drawer_selected_dark">#202020</color>
+
+    <!--color_dialog-->
+    <color name="color_dialog_gray">#ededf3</color>
+    <color name="color_dialog_content">#ed7861</color>
+    <color name="color_dialog_title">#666666</color>
+    <color name="color_dialog_content_prompt">#666666</color>
+
+    <color name="color_type_info">#79b3e4</color>
+    <color name="color_type_help">#e8bd4b</color>
+    <color name="color_type_wrong">#ed7861</color>
+    <color name="color_type_warning">#e8bd4b</color>
+    <color name="color_type_success">#90b06e</color>
 </resources>

@@ -141,7 +141,11 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
             tvAuthor.setText(TextUtils.isEmpty(author) ? "未知" : author);
             String origin = TextUtils.isEmpty(searchBookBean.getOrigin()) ? "未知" : searchBookBean.getOrigin();
             tvOrigin.setText(origin);
-            tvChapter.setText(searchBookBean.getLastChapter());  // newest
+			String LastChapterName = ChapterContentHelp.getInstance().replaceContent(searchBookBean.getName(),
+                            searchBookBean.getTag(),
+                            searchBookBean.getLastChapter(),
+                            true,true);
+            tvChapter.setText(LastChapterName);  // newest
             tvIntro.setText(StringUtils.formatHtml(searchBookBean.getIntroduce()));
             tvShelf.setText(R.string.add_to_shelf);
             tvRead.setText(R.string.start_read);
@@ -183,7 +187,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                 String DurChapterName = ChapterContentHelp.getInstance().replaceContent(bookShelfBean.getBookInfoBean().getName(),
                         bookShelfBean.getTag(),
                         bookShelfBean.getDurChapterName(),
-                        bookShelfBean.getReplaceEnable(),true);
+                        true,true);
                 tvChapter.setText(DurChapterName); // last
                 tvShelf.setText(R.string.remove_from_bookshelf);
                 tvRead.setText(R.string.continue_read);
@@ -196,7 +200,7 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
                     String LastChapterName = ChapterContentHelp.getInstance().replaceContent(bookShelfBean.getBookInfoBean().getName(),
                             bookShelfBean.getTag(),
                             bookShelfBean.getLastChapterName(),
-                            bookShelfBean.getReplaceEnable(),true);
+                            true,true);
                     tvChapter.setText(LastChapterName); // last
                 }
                 tvShelf.setText(R.string.add_to_shelf);

@@ -59,8 +59,8 @@ class ChapterProvider {
             txtChapter.setStatus(TxtChapter.Status.FINISH);
             txtChapter.setMsg(str);
             TxtPage txtPage = new TxtPage(txtChapter.getTxtPageList().size());
-            txtPage.setTitle(contentHelper.replaceContent(this.pageLoader.book.getBookInfoBean().getName(), this.pageLoader.book.getTag(), bookChapterBean.getDurChapterName(), pageLoader.book.getReplaceEnable(),true));
-            txtPage.addLine(contentHelper.replaceContent(this.pageLoader.book.getBookInfoBean().getName(), this.pageLoader.book.getTag(), bookChapterBean.getDurChapterName(), pageLoader.book.getReplaceEnable(),true));
+            txtPage.setTitle(contentHelper.replaceContent(this.pageLoader.book.getBookInfoBean().getName(), this.pageLoader.book.getTag(), bookChapterBean.getDurChapterName(), true,true));
+            txtPage.addLine(contentHelper.replaceContent(this.pageLoader.book.getBookInfoBean().getName(), this.pageLoader.book.getTag(), bookChapterBean.getDurChapterName(), true,true));
             txtPage.addLine(str);
             txtPage.setTitleLines(1);
             txtChapter.addPage(txtPage);
@@ -77,7 +77,7 @@ class ChapterProvider {
         boolean showTitle = pageLoader.readBookControl.getShowTitle().booleanValue();// 是否展示标题
         String paragraph = null;
         if (showTitle) {
-            paragraph = contentHelper.replaceContent(this.pageLoader.book.getBookInfoBean().getName(), this.pageLoader.book.getTag(), bookChapterBean.getDurChapterName(), pageLoader.book.getReplaceEnable(),true);
+            paragraph = contentHelper.replaceContent(this.pageLoader.book.getBookInfoBean().getName(), this.pageLoader.book.getTag(), bookChapterBean.getDurChapterName(), true,true);
             paragraph = paragraph.trim() + str3;
         }
         int i = 1;
@@ -115,7 +115,7 @@ class ChapterProvider {
                 if (rHeight <= 0) {
                     // 创建Page
                     TxtPage txtPage2 = new TxtPage(txtChapter.getTxtPageList().size());
-                    txtPage2.setTitle(contentHelper.replaceContent(this.pageLoader.book.getBookInfoBean().getName(), this.pageLoader.book.getTag(), bookChapterBean.getDurChapterName(), pageLoader.book.getReplaceEnable(),true));
+                    txtPage2.setTitle(contentHelper.replaceContent(this.pageLoader.book.getBookInfoBean().getName(), this.pageLoader.book.getTag(), bookChapterBean.getDurChapterName(), true,true));
                     txtPage2.addLines(lines);
                     txtPage2.txtLists = new ArrayList(txtLists);
                     txtPage2.setTitleLines(titleLinesCount);
@@ -213,7 +213,7 @@ class ChapterProvider {
         if (lines.size() != 0) {
             //创建Page
             TxtPage txtPage3 = new TxtPage(txtChapter.getTxtPageList().size());
-            txtPage3.setTitle(contentHelper.replaceContent(this.pageLoader.book.getBookInfoBean().getName(), this.pageLoader.book.getTag(), bookChapterBean.getDurChapterName(), pageLoader.book.getReplaceEnable(),true));
+            txtPage3.setTitle(contentHelper.replaceContent(this.pageLoader.book.getBookInfoBean().getName(), this.pageLoader.book.getTag(), bookChapterBean.getDurChapterName(), true,true));
             txtPage3.addLines(lines);
             txtPage3.txtLists = new ArrayList(txtLists);
             txtPage3.setTitleLines(titleLinesCount);
