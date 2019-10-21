@@ -122,6 +122,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     TextView tvUrl;
     @BindView(R.id.atv_line)
     View atvLine;
+    @BindView(R.id.atv_layout)
+    LinearLayout atvlayout;
     @BindView(R.id.ll_menu_top)
     LinearLayout llMenuTop;
     @BindView(R.id.appBar)
@@ -170,7 +172,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private MoDialogHUD moDialogHUD;
     private ThisBatInfoReceiver batInfoReceiver;
     private ReadBookControl readBookControl = ReadBookControl.getInstance();
-
+    private String Avrurl;
     private boolean autoPage = false;
     private boolean aloudNextPage;
     private int lastX, lastY;
@@ -774,15 +776,15 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void bindEvent() {
-        tvChapterName.setOnClickListener(v -> {
+        tvUrl.setOnClickListener(v -> {
             if (mPresenter.getBookSource() != null) {
                 SourceEditActivity.startThis(this, mPresenter.getBookSource());
             }
         });
         //打开URL
-        tvUrl.setOnClickListener(view -> {
+        tvChapterName.setOnClickListener(view -> {
             try {
-                String url = tvUrl.getText().toString();
+                String url = Avrurl;
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(url));
                 startActivity(intent);
@@ -827,18 +829,19 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                         mPresenter.getBookShelf().setDurChapterName(mPresenter.getChapterList().get(pos).getDurChapterName());
                         actionBar.setTitle(mPresenter.getBookShelf().getBookInfoBean().getName());
                         if (mPresenter.getBookShelf().getChapterListSize() > 0) {
-                            tvChapterName.setVisibility(View.VISIBLE);
+                            atvlayout.setVisibility(View.VISIBLE);
+                            atvLine.setVisibility(View.VISIBLE);
                             String DurChapterName = ChapterContentHelp.getInstance().replaceContent(mPresenter.getBookShelf().getBookInfoBean().getName(),
                                     mPresenter.getBookShelf().getTag(),
                                     mPresenter.getChapterList().get(pos).getDurChapterName(),
                                     true,true);
                             tvChapterName.setText(DurChapterName);
-                            tvUrl.setVisibility(View.VISIBLE);
-                            tvUrl.setText(NetworkUtils.getAbsoluteURL(mPresenter.getBookShelf().getBookInfoBean().getChapterUrl(),
-                                    mPresenter.getChapterList().get(pos).getDurChapterUrl()));
+                            tvUrl.setText(mPresenter.getBookShelf().getBookInfoBean().getOrigin());
+                            Avrurl = NetworkUtils.getAbsoluteURL(mPresenter.getBookShelf().getBookInfoBean().getChapterUrl(),
+                                    mPresenter.getChapterList().get(pos).getDurChapterUrl());
                         } else {
-                            tvChapterName.setVisibility(View.GONE);
-                            tvUrl.setVisibility(View.GONE);
+                            atvlayout.setVisibility(View.GONE);
+                            atvLine.setVisibility(View.GONE);
                         }
 
                         if (mPresenter.getBookShelf().getChapterListSize() == 1) {
@@ -1696,10 +1699,10 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (menu == null) return;
         boolean onLine = mPresenter.getBookShelf() != null && !mPresenter.getBookShelf().getTag().equals(BookShelfBean.LOCAL_TAG);
         if (onLine) {
-            tvUrl.setVisibility(View.VISIBLE);
+            atvlayout.setVisibility(View.VISIBLE);
             atvLine.setVisibility(View.VISIBLE);
         } else {
-            tvUrl.setVisibility(View.GONE);
+            atvlayout.setVisibility(View.GONE);
             atvLine.setVisibility(View.GONE);
         }
         for (int i = 0; i < menu.size(); i++) {

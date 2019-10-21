@@ -12,9 +12,12 @@ import org.greenrobot.greendao.annotation.OrderBy;
 import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import static android.text.TextUtils.isEmpty;
+import static com.kunfei.bookshelf.constant.AppConstant.MAP_STRING;
 
 /**
  * Created by GKF on 2017/12/14.
@@ -75,16 +78,17 @@ public class BookSourceBean implements Cloneable {
     private String ruleContentUrlNext;
     private String ruleBookContent;
     private String httpUserAgent;
+    private String httpHeader;
 
     @Transient
     private transient ArrayList<String> groupList;
 
-    @Generated(hash = 747791989)
+    @Generated(hash = 1395399180)
     public BookSourceBean(String bookSourceUrl, String bookSourceName, String bookSourceGroup, String bookSourceType, String loginUrl, Long lastUpdateTime, int serialNumber, int weight, boolean enable, boolean enableFind, String ruleFindUrl,
             String ruleFindList, String ruleFindName, String ruleFindAuthor, String ruleFindKind, String ruleFindIntroduce, String ruleFindLastChapter, String ruleFindCoverUrl, String ruleFindNoteUrl, String ruleSearchUrl,
             String ruleSearchList, String ruleSearchName, String ruleSearchAuthor, String ruleSearchKind, String ruleSearchIntroduce, String ruleSearchLastChapter, String ruleSearchCoverUrl, String ruleSearchNoteUrl, String ruleBookUrlPattern,
             String ruleBookInfoInit, String ruleBookName, String ruleBookAuthor, String ruleCoverUrl, String ruleIntroduce, String ruleBookKind, String ruleBookLastChapter, String ruleChapterUrl, String ruleChapterUrlNext,
-            String ruleChapterList, String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String httpUserAgent) {
+            String ruleChapterList, String ruleChapterName, String ruleContentUrl, String ruleContentUrlNext, String ruleBookContent, String httpUserAgent, String httpHeader) {
         this.bookSourceUrl = bookSourceUrl;
         this.bookSourceName = bookSourceName;
         this.bookSourceGroup = bookSourceGroup;
@@ -129,6 +133,7 @@ public class BookSourceBean implements Cloneable {
         this.ruleContentUrlNext = ruleContentUrlNext;
         this.ruleBookContent = ruleBookContent;
         this.httpUserAgent = httpUserAgent;
+        this.httpHeader = httpHeader;
     }
 
     public BookSourceBean() {
@@ -163,6 +168,7 @@ public class BookSourceBean implements Cloneable {
                     && stringEquals(ruleSearchCoverUrl, bs.ruleSearchCoverUrl)
                     && stringEquals(ruleSearchNoteUrl, bs.ruleSearchNoteUrl)
                     && stringEquals(httpUserAgent, bs.httpUserAgent)
+                    && stringEquals(httpHeader, bs.httpHeader)
                     && stringEquals(ruleBookKind, bs.ruleBookKind)
                     && stringEquals(ruleBookLastChapter, bs.ruleBookLastChapter)
                     && stringEquals(ruleBookUrlPattern, bs.ruleBookUrlPattern);
@@ -382,8 +388,16 @@ public class BookSourceBean implements Cloneable {
         return this.httpUserAgent;
     }
 
-    public void setHttpUserAgent(String httpHeaders) {
-        this.httpUserAgent = httpHeaders;
+    public void setHttpUserAgent(String httpUserAgent) {
+        this.httpUserAgent = httpUserAgent;
+    }
+
+    public String getHttpHeader() {
+        return this.httpHeader;
+    }
+
+    public void setHttpHeader(String httpHeader) {
+        this.httpHeader = httpHeader;
     }
 
     public String getRuleFindUrl() {

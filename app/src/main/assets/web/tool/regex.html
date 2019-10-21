@@ -1,0 +1,177 @@
+﻿
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN"> 
+<head> 
+<title>正则表达式测试</title>
+<meta http-equiv="Content-Type" content="text/html; charset=GBK" /> 
+<meta http-equiv="Content-Language" content="zh-CN" /> 
+<link rel="stylesheet" href="basic.css" type="text/css"/> 
+<script type="text/javascript" src='jquery-1.7.2.js'></script>
+<script type="text/javascript" src='jquery.cookies.2.2.0.min.js'></script>
+<link rel="stylesheet" href='bootstrap.min.css'/>
+<script src='bootstrap.min.js'></script>
+
+</head>
+<body>
+	<!--     头部header开始    -->
+<div id="header">
+	<div class="wrapper">
+		<div id="mainSearch">
+										
+				<!-- Put the following javascript before the closing </head> tag. -->
+
+		</div>
+		<div class="texthidden" >
+			<h1>正则表达式测试工具</h1>
+		</div>
+	</div>
+</div>
+<!--     头部header结束    -->
+
+	<style>
+.topBar{margin:10px 0 10px 0;}
+.bottomBar{margin:10px 0 10px 0;}
+#mainContent textarea{width:650px;height:150px;}
+#mainContent ul{margin-top:10px;}
+#right_area li{height:40px;font-size:13pt;}
+</style>
+<div id="mainContent" class="wrapper clearfix">
+	<div class="row-fluid">
+				<div class="span8">
+        	<div class="topBar">
+        		<textarea id="textSour" placeholder="在此输入待匹配文本" autoHeight="true"></textarea>
+        	</div>
+        	<div class="operateTB">
+        		<form class="well form-inline">
+					<div class="input-prepend">
+					<textarea id="textPattern" style="width:608px;" autoHeight="true" placeholder="在此输入正则表达式"></textarea>
+					</div></br></br>
+        			<label class="checkbox"><input type="checkbox" value="global" checked="checked" id="optionGlobal" name="optionGlobl"/>全局搜索</label>
+            		<label class="checkbox"><input type="checkbox" value="ignoreCase" id="optionIgnoreCase" name="optionIgnoreCase"/>忽略大小写</label>
+					<label class="checkbox"><input type="checkbox" value="fs" checked="checked" id="optionFs" name="optionFs"/>EXEC (exec / match)</label>
+        			<a onclick="return onMatch();" class="btn btn-primary"><i class="icon-chevron-down icon-white"></i>测试匹配</a>
+				</form>
+        	</div>
+        	<div class="bottomBar">
+        		<div class="title">匹配结果：</div>
+        		<textarea readonly="readonly" id="textMatchResult"></textarea>
+        	</div>
+			<div class="operateTB">
+				<form class="well form-inline">
+					<div class="input-prepend">
+					<textarea id="textReplace" style="width:608px;" autoHeight="true" placeholder="在此输入替换文本"></textarea>
+					</div></br></br>
+					<a onclick="return onReplace()" class="btn btn-primary"><i class="icon-chevron-down icon-white"></i>替换</a>
+				</form>
+        	</div>
+        	<div class="bottomBar">
+        		<div class="title">替换结果：</div>
+            	<textarea readonly="readonly" id="textReplaceResult"></textarea><br/>
+        	</div>
+		</div>
+				<div class="span4" id="right_area">
+    		<ul class="nav nav-list well">
+				<li class="nav-header"><i class="icon-list icon-black"></i>常用正则表达式</li>
+				<li><a href="#" Replace="第$2章 " text ="369.第一章 对对对" title="^(.{0,20}?([\d零〇一二两三四五六七八九十百千万]+)[章节回场]?){1,2}[\s、，。　：:.](?!([-\s]?[-\d零〇一二两三四五六七八九十百千万]+))" >章节标题正则1</a></li>
+    			<li><a href="#" Replace="第$2章 " text ="369.第一章 对对对" title="^(.{0,20}?([\d零〇一二两三四五六七八九十百千万]+)[章节回场]){1,2}[\s、，。　：:.]?">章节标题正则2</a></li>
+
+    		</ul>
+		</div>
+	</div>
+</div> <!-- /container -->
+<script language="javascript">
+$(function(){
+        $.fn.autoHeight = function(){    
+        function autoHeight(elem){
+            elem.style.height = 'auto';
+            elem.scrollTop = 0; //防抖动
+            elem.style.height = elem.scrollHeight + 'px';
+        }
+        this.each(function(){
+            autoHeight(this);
+            $(this).on('keyup', function(){
+                autoHeight(this);
+            });
+        });     
+    }                
+    $('textarea[autoHeight]').autoHeight();    
+})
+$(document).ready(function (){
+	$("#right_area li a").click(function (){
+		$("#textSour").val($(this).attr("text"));
+		$("#textPattern").val($(this).attr("title"));
+		$("#textReplace").val($(this).attr("Replace"));
+		onMatch();
+		onReplace();
+	});
+	});
+
+function setVisible(idElement, visible) {
+	var obj = document.getElementById(idElement);
+	obj.style.visibility = visible ? "visible" : "hidden";
+}
+function isValidFields() {
+	var textSour = document.getElementById("textSour");
+	if (null==textSour.value || textSour.value.length<1) {
+		textSour.focus();
+		alert("请输入待匹配文本");
+		return false;
+	}
+	var textPattern = document.getElementById("textPattern");
+	if (null==textPattern.value || textPattern.value.length<1) {
+		textPattern.focus();
+		alert("请输入正则表达式");
+		return false;
+	}
+	return true;
+}
+function buildRegex() {
+	var op = "";
+	if (document.getElementById("optionGlobal").checked)op = "g";
+	if (document.getElementById("optionIgnoreCase").checked)op = op + "i";
+	return new RegExp(document.getElementById("textPattern").value, op);
+}
+function onMatch() {
+	if (!isValidFields())
+	return false;
+	document.getElementById("textMatchResult").value = "";
+	var regex = buildRegex();
+	var str = document.getElementById("textSour").value
+	if (document.getElementById("optionFs").checked) {
+		var result = regex.exec(str);
+	}
+	else {
+		var result = str.match(regex);
+	}
+	
+	if (null==result || 0==result.length) {
+		document.getElementById("textMatchResult").value = "（没有匹配）";
+		return false;
+	}
+	if (document.getElementById("optionGlobal").checked) {
+		var strResult = "共找到 " + result.length + " 处匹配：\r\n";
+		for (var i=0;i < result.length;++i)strResult += '匹配['+i+']：' + result[i] + "\r\n";
+		document.getElementById("textMatchResult").value = strResult;
+	}
+	else {
+		document.getElementById("textMatchResult").value= "匹配位置：" + regex.lastIndex + "\r\n匹配结果：" + result[0];
+	}
+	return true;
+}
+function onReplace() {
+	var str = document.getElementById("textSour").value;
+	var regex = buildRegex();
+	document.getElementById("textReplaceResult").value= str.replace(regex, document.getElementById("textReplace").value);
+}
+function reset()
+{
+	$("#textSour").val("");
+	$("#textPattern").val("");
+	$("#textMatchResult").val("");
+	$("#textReplace").val("");
+	$("#textReplaceResult").val("");
+}
+</script>
+
+</body>
+</html>

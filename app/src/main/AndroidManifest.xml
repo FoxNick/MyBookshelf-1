@@ -28,12 +28,12 @@
         android:theme="@style/CAppTheme"
         tools:ignore="AllowBackup,UnusedAttribute"
         tools:replace="android:theme">
-
         <activity
             android:name=".view.activity.WelcomeActivity"
             android:theme="@style/CAppWelcomeTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -49,6 +49,7 @@
             android:theme="@style/CAppWelcomeTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -70,7 +71,9 @@
             android:screenOrientation="behind">
             <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
@@ -80,12 +83,16 @@
             android:label="@string/receiving_shared_label">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
@@ -181,6 +188,10 @@
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask" />
         <activity
+            android:name=".view.activity.BookCoverEditActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:launchMode="singleTask" />
+        <activity
             android:name=".help.permission.PermissionActivity"
             android:theme="@style/Activity.Permission" />
 
@@ -205,7 +216,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
     </application>
 
 </manifest>

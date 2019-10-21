@@ -25,6 +25,7 @@ const RuleJSON = (() => {
 	ruleJson.serialNumber = 0;
 	ruleJson.weight = 0;
 	ruleJson.enable = true;
+	ruleJson.enableFind = true;
 	return ruleJson;
 })();
 // 选项卡Tab切换事件处理
@@ -81,6 +82,7 @@ function rule2json() {
 	RuleJSON.serialNumber = RuleJSON.serialNumber == '' ? 0 : parseInt(RuleJSON.serialNumber);
 	RuleJSON.weight = RuleJSON.weight == '' ? 0 : parseInt(RuleJSON.weight);
 	RuleJSON.enable = RuleJSON.enable == '' || RuleJSON.enable.toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
+	RuleJSON.enableFind = RuleJSON.enableFind == '' || RuleJSON.enableFind.toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
 	let TempRules = RuleSources.filter(item => (item['bookSourceUrl'] == RuleJSON['bookSourceUrl'] ? item : null));
 	if (TempRules.length > 0) {
 		Object.keys(RuleJSON).forEach(key => TempRules[0][key] = RuleJSON[key]);
