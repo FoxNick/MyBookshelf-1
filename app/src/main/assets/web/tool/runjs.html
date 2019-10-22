@@ -5,7 +5,7 @@
 <meta charset="utf-8" /> 
 <title>JS代码运行工具</title>
 <link rel="stylesheet" href="basic.css" type="text/css"/> 
-<link rel="stylesheet" href='bootstrap.min.css'/>
+
 <style>.CodeMirror{font-family:monospace;height:300px;color:#000;direction:ltr}
 .CodeMirror-lines{padding:4px 0}
 .CodeMirror pre{padding:0 4px}
@@ -82,11 +82,7 @@ white-space:pre;vertical-align:middle;word-break:break-word;overflow-y:auto}.but
 	<!--     头部header开始    -->
 <div id="header">
 	<div class="wrapper">
-		<div id="mainSearch">
-										
-				<!-- Put the following javascript before the closing </head> tag. -->
 
-		</div>
 		<div class="texthidden" >
 			<h1>JS代码运行工具</h1>
 		</div>
@@ -104,9 +100,9 @@ function a(){
 		for(let i in a){
 				r.push(a[i] +'::/book-sort?gender='+ parseInt(i) +'&limit=20&type=new&start={{(searchPage-1)*20}}');
 		}
-		return r.join('&&');
+		return r.join('\n');//测试完成请把"\n"换成"&&"
 }
-console.log(a());
+console.log('JS规则代码测试结果\n'+a()+'\n<-测试完成');
 </code>
 </pre>
 </section>

@@ -7,9 +7,6 @@
 <meta http-equiv="Content-Language" content="zh-CN" /> 
 <link rel="stylesheet" href="basic.css" type="text/css"/> 
 <script type="text/javascript" src='jquery-1.7.2.js'></script>
-<script type="text/javascript" src='jquery.cookies.2.2.0.min.js'></script>
-<link rel="stylesheet" href='bootstrap.min.css'/>
-<script src='bootstrap.min.js'></script>
 
 </head>
 <body>
@@ -45,11 +42,11 @@
         		<form class="well form-inline">
 					<div class="input-prepend">
 					<textarea id="textPattern" style="width:608px;" autoHeight="true" placeholder="在此输入正则表达式"></textarea>
-					</div></br></br>
+					</div>
         			<label class="checkbox"><input type="checkbox" value="global" checked="checked" id="optionGlobal" name="optionGlobl"/>全局搜索</label>
             		<label class="checkbox"><input type="checkbox" value="ignoreCase" id="optionIgnoreCase" name="optionIgnoreCase"/>忽略大小写</label>
 					<label class="checkbox"><input type="checkbox" value="fs" checked="checked" id="optionFs" name="optionFs"/>EXEC (exec / match)</label>
-        			<a onclick="return onMatch();" class="btn btn-primary"><i class="icon-chevron-down icon-white"></i>测试匹配</a>
+        			<a onclick="return onMatch();" class="btn btn-primary">测试匹配</a>
 				</form>
         	</div>
         	<div class="bottomBar">
@@ -60,8 +57,8 @@
 				<form class="well form-inline">
 					<div class="input-prepend">
 					<textarea id="textReplace" style="width:608px;" autoHeight="true" placeholder="在此输入替换文本"></textarea>
-					</div></br></br>
-					<a onclick="return onReplace()" class="btn btn-primary"><i class="icon-chevron-down icon-white"></i>替换</a>
+					</div>
+					<a onclick="return onReplace()" class="btn btn-primary">替换</a>
 				</form>
         	</div>
         	<div class="bottomBar">
@@ -71,10 +68,10 @@
 		</div>
 				<div class="span4" id="right_area">
     		<ul class="nav nav-list well">
-				<li class="nav-header"><i class="icon-list icon-black"></i>常用正则表达式</li>
+				<li class="nav-header">常用正则表达式</li>
 				<li><a href="#" Replace="第$2章 " text ="369.第一章 对对对" title="^(.{0,20}?([\d零〇一二两三四五六七八九十百千万]+)[章节回场]?){1,2}[\s、，。　：:.](?!([-\s]?[-\d零〇一二两三四五六七八九十百千万]+))" >章节标题正则1</a></li>
-    			<li><a href="#" Replace="第$2章 " text ="369.第一章 对对对" title="^(.{0,20}?([\d零〇一二两三四五六七八九十百千万]+)[章节回场]){1,2}[\s、，。　：:.]?">章节标题正则2</a></li>
-
+    			<li><a href="#" Replace="第$2章 " text ="第一卷 第一章 对对对" title="第.*?[卷篇集].*?[\s、，。　：:._]?(第?([\d零〇一二两三四五六七八九十百千万]+)[章节回场])[\s、，。　：:.]?">章节标题正则2</a></li>
+    			<li><a href="#" Replace="第$2章 " text ="369.对对对" title="^(.{0,20}?([\d]+)){1,2}[\s、，。　：:.]?">章节标题正则3</a></li>
     		</ul>
 		</div>
 	</div>
