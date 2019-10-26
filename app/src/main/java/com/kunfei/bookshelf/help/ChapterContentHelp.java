@@ -44,35 +44,41 @@ public class ChapterContentHelp {
         if (!replaceEnable) return toTraditional(content);
         if (ReplaceRuleManager.getEnabled().size() == 0) return toTraditional(content);
         //替换
+        if(replaceTitle) {
+            content = StringUtils.trim(StringUtils.fullToHalf(content)
+                    .replace("(", "（")
+                    .replace(")", "）")
+                    .replaceAll("[\\[\\]【】]+", ""));
+        }
         for (ReplaceRuleBean replaceRule : ReplaceRuleManager.getEnabled()) {
             if (isUseTo(replaceRule.getUseTo(), bookTag, bookName)) {
                 try {
-                    if(replaceTitle){
-                        content = StringUtils.trim(StringUtils.fullToHalf(content)
-                                .replace("(", "（")
-                                .replace(")", "）")
-                                .replaceAll("[\\[\\]【】]+", "")
-                                .replaceAll("\\s+", " "));
-                        Pattern pattern = Pattern.compile(replaceRule.getFixedRegex(), Pattern.MULTILINE);
-                        Matcher matcher = pattern.matcher(content);
-                        if (matcher.find()) {
-                            int num = StringUtils.stringToInt(matcher.group(2));
-                            if (num > 0) {
-                                content = matcher.replaceFirst("第" + num + "章 ");
-                                break;
-                            }
-                        }
-                    } else {
-                        content = content.replaceAll(replaceRule.getFixedRegex(), replaceRule.getReplacement());
-                    }
-
+                    content = content.replaceAll(replaceRule.getFixedRegex(), replaceRule.getReplacement());
                 } catch (Exception ignored) {
                 }
             }
         }
-        return toTraditional(content);
+        if(replaceTitle){
+            return toTraditional(toNumChapter(content));
+        } else {
+            return toTraditional(content);
+        }
     }
-
+    /**
+     * 章节数转数字
+     */
+    public String toNumChapter(String s) {
+        if (s == null) {
+            return null;
+        }
+        s = StringUtils.fullToHalf(s).replaceAll("章 章 ", "章 ");
+        Pattern pattern = Pattern.compile("^(第([零〇一二两三四五六七八九十百千万]+)[章])");
+        Matcher matcher = pattern.matcher(s);
+        if (matcher.find()) {
+            return matcher.replaceFirst("第" + StringUtils.stringToInt(matcher.group(2)) + "章");
+        }
+        return s;
+    }
     private boolean isUseTo(String useTo, String bookTag, String bookName) {
         return TextUtils.isEmpty(useTo)
                 || useTo.contains(bookTag)
