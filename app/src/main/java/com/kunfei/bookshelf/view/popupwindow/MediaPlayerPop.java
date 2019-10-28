@@ -23,7 +23,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.kunfei.bookshelf.R;
-import com.kunfei.bookshelf.help.BlurTransformation;
+import jp.wasabeef.glide.transformations.BlurTransformation;
 import com.kunfei.bookshelf.utils.ColorUtil;
 import com.kunfei.bookshelf.utils.TimeUtils;
 import com.kunfei.bookshelf.utils.theme.MaterialValueHelper;
@@ -181,7 +181,7 @@ public class MediaPlayerPop extends FrameLayout {
             Glide.with(this).load(coverPath)
                     .apply(new RequestOptions().dontAnimate().diskCacheStrategy(DiskCacheStrategy.RESOURCE).centerCrop()
                             .placeholder(R.drawable.img_cover_gs))
-                    .apply(RequestOptions.bitmapTransform(new BlurTransformation(getContext(), 25)))
+                    .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 3)))
                     .into(ivCoverBg);
         } else {
             File file = new File(coverPath);
@@ -192,7 +192,7 @@ public class MediaPlayerPop extends FrameLayout {
             Glide.with(this).load(file)
                     .apply(new RequestOptions().dontAnimate().diskCacheStrategy(DiskCacheStrategy.RESOURCE).centerCrop()
                             .placeholder(R.drawable.img_cover_gs))
-                    .apply(RequestOptions.bitmapTransform(new BlurTransformation(getContext(), 25)))
+                    .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 3)))
                     .into(ivCoverBg);
         }
     }

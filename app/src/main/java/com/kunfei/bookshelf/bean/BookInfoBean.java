@@ -39,6 +39,7 @@ public class BookInfoBean implements Cloneable {
     private long finalRefreshData;  //章节最后更新时间
     private String coverUrl; //小说封面
     private String author;//作者
+    private String kind;//分类
     private String introduce; //简介
     private String origin; //来源
     private String charset;//编码
@@ -51,9 +52,9 @@ public class BookInfoBean implements Cloneable {
     public BookInfoBean() {
     }
 
-    @Generated(hash = 906814482)
-    public BookInfoBean(String name, String tag, String noteUrl, String chapterUrl, long finalRefreshData, String coverUrl, String author, String introduce,
-                        String origin, String charset, String bookSourceType) {
+    @Generated(hash = 785617790)
+    public BookInfoBean(String name, String tag, String noteUrl, String chapterUrl, long finalRefreshData, String coverUrl, String author, String kind, String introduce,
+            String origin, String charset, String bookSourceType) {
         this.name = name;
         this.tag = tag;
         this.noteUrl = noteUrl;
@@ -61,6 +62,7 @@ public class BookInfoBean implements Cloneable {
         this.finalRefreshData = finalRefreshData;
         this.coverUrl = coverUrl;
         this.author = author;
+        this.kind = kind;
         this.introduce = introduce;
         this.origin = origin;
         this.charset = charset;
@@ -124,6 +126,14 @@ public class BookInfoBean implements Cloneable {
             return "";
         }
         return coverUrl;
+    }
+
+    public String getKind() {
+        return kind;
+    }
+
+    public void setKind(String kind) {
+        this.kind = kind;
     }
 
     public void setCoverUrl(String coverUrl) {

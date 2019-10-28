@@ -178,12 +178,13 @@ class BookList {
         item.setOrigin(sourceName);
         item.setNoteUrl(baseUrl);
         // 获取详情页预处理规则
+        Object object = null;
         String ruleInfoInit = bookSourceBean.getRuleBookInfoInit();
         if (!isEmpty(ruleInfoInit)) {
             // 仅使用java正则表达式提取书籍详情
             if (ruleInfoInit.startsWith(":")) {
                 ruleInfoInit = ruleInfoInit.substring(1);
-                Debug.printLog(tag, "┌详情信息预处理");
+                Debug.printLog(tag, "┌详情信息正则预处理");
                 BookShelfBean bookShelfBean = new BookShelfBean();
                 bookShelfBean.setTag(tag);
                 bookShelfBean.setNoteUrl(baseUrl);
@@ -191,16 +192,19 @@ class BookList {
                 if (isEmpty(bookShelfBean.getBookInfoBean().getName())) return null;
                 item.setName(bookShelfBean.getBookInfoBean().getName());
                 item.setAuthor(bookShelfBean.getBookInfoBean().getAuthor());
+                item.setKind(bookShelfBean.getBookInfoBean().getKind());
                 item.setCoverUrl(bookShelfBean.getBookInfoBean().getCoverUrl());
                 item.setLastChapter(bookShelfBean.getLastChapterName());
                 item.setIntroduce(bookShelfBean.getBookInfoBean().getIntroduce());
                 return item;
             } else {
-                Object object = analyzer.getElement(ruleInfoInit);
-                if (object != null) {
-                    analyzer.setContent(object);
-                }
+                object = analyzer.getElement(ruleInfoInit);
             }
+        }
+        if (object != null) {
+            Debug.printLog(tag, "┌详情信息预处理");
+            analyzer.setContent(object);
+            Debug.printLog(tag, "└详情预处理完成");
         }
         Debug.printLog(tag, ">书籍网址:" + baseUrl);
         Debug.printLog(tag, "┌获取书名");

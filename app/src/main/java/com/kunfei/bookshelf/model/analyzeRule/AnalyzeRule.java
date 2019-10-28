@@ -531,9 +531,8 @@ public class AnalyzeRule {
             bindings.put("baseUrl", baseUrl);
             return SCRIPT_ENGINE.eval(jsStr, bindings);
         } catch (Exception e) {
-            //Logger.e(TAG, jsStr, e);
+            return e.getMessage();
         }
-        return null;
     }
 
     /**

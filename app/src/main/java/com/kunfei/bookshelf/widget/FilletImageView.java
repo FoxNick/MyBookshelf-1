@@ -35,7 +35,7 @@ public class FilletImageView extends AppCompatImageView {
     private void init(Context context, AttributeSet attrs) {
         // 读取配置
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.FilletImageView);
-        int defaultRadius = 5;
+        int defaultRadius = 6;
         int radius = array.getDimensionPixelOffset(R.styleable.FilletImageView_radius, defaultRadius);
         leftTopRadius = array.getDimensionPixelOffset(R.styleable.FilletImageView_left_top_radius, defaultRadius);
         rightTopRadius = array.getDimensionPixelOffset(R.styleable.FilletImageView_right_top_radius, defaultRadius);

@@ -260,9 +260,8 @@ public class AnalyzeUrl {
             bindings.put("result", result);
             return SCRIPT_ENGINE.eval(jsStr, bindings);
         } catch (Exception e) {
-            //Logger.e(TAG, jsStr, e);
+            return e.getMessage();
         }
-        return null;
     }
 
     public String getHost() {

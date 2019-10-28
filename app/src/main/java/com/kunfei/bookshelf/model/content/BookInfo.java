@@ -51,25 +51,24 @@ class BookInfo {
             // 获取详情页预处理规则
             String ruleInfoInit = bookSourceBean.getRuleBookInfoInit();
             boolean isRegex = false;
+            Object object = null;
             if (!isEmpty(ruleInfoInit)) {
                 // 仅使用java正则表达式提取书籍详情
                 if (ruleInfoInit.startsWith(":")) {
                     isRegex = true;
                     ruleInfoInit = ruleInfoInit.substring(1);
-                    Debug.printLog(tag, "┌详情信息预处理");
+                    Debug.printLog(tag, "┌详情信息正则预处理");
                     AnalyzeByRegex.getInfoOfRegex(s, ruleInfoInit.split("&&"), 0, bookShelfBean, analyzer, bookSourceBean, tag);
                 } else {
-                    Object object = analyzer.getElement(ruleInfoInit);
-                    if (object != null) {
-                        analyzer.setContent(object);
-                    }
+                    object = analyzer.getElement(ruleInfoInit);
                 }
             }
             if (!isRegex) {
-                Debug.printLog(tag, "┌详情信息预处理");
-                Object object = analyzer.getElement(ruleInfoInit);
-                if (object != null) analyzer.setContent(object);
-                Debug.printLog(tag, "└详情预处理完成");
+                if (object != null) {
+                    Debug.printLog(tag, "┌详情信息预处理");
+                    analyzer.setContent(object);
+                    Debug.printLog(tag, "└详情预处理完成");
+                }
 
                 Debug.printLog(tag, "┌获取书名");
                 String bookName = StringUtils.formatHtml(analyzer.getString(bookSourceBean.getRuleBookName()));
@@ -83,6 +82,7 @@ class BookInfo {
 
                 Debug.printLog(tag, "┌获取分类");
                 String bookKind = analyzer.getString(bookSourceBean.getRuleBookKind());
+                if (!isEmpty(bookKind)) bookInfoBean.setKind(bookKind);
                 Debug.printLog(tag, 111, "└" + bookKind);
 
                 Debug.printLog(tag, "┌获取最新章节");

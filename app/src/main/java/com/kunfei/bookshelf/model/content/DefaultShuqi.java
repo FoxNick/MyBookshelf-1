@@ -387,7 +387,12 @@ public class DefaultShuqi extends BaseModelImpl implements IStationBookModel {
             bookContentBean.setNoteUrl(chapterBean.getNoteUrl());
             bookContentBean.setDurChapterContent(decodeChapterContent(getContent(response)));
             Debug.printLog(tag, 1, "┌解析正文内容");
-            Debug.printLog(tag, 1, "└" + bookContentBean.getDurChapterContent());
+            //Debug.printLog(tag, 1, "└" + bookContentBean.getDurChapterContent());
+            if (bookContentBean.getDurChapterContent() != null && bookContentBean.getDurChapterContent().length() > 4000) {
+                Debug.printLog(tag, 1, "└" + bookContentBean.getDurChapterContent().substring(0, 4000) + "···");
+            } else {
+                Debug.printLog(tag, 1, "└" + bookContentBean.getDurChapterContent());
+            }
             e.onNext(bookContentBean);
             e.onComplete();
         });

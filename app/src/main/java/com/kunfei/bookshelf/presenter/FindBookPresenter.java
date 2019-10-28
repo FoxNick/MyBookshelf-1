@@ -118,14 +118,13 @@ public class FindBookPresenter extends BasePresenterImpl<FindBookContract.View> 
      */
     private Object evalJS(String jsStr, String baseUrl) {
         try {
-        SimpleBindings bindings = new SimpleBindings();
-        bindings.put("java", getAnalyzeRule());
-        bindings.put("baseUrl", baseUrl);
-        return SCRIPT_ENGINE.eval(jsStr, bindings);
-    } catch (Exception e) {
-        //Logger.e(TAG, jsStr, e);
-    }
-        return null;
+            SimpleBindings bindings = new SimpleBindings();
+            bindings.put("java", getAnalyzeRule());
+            bindings.put("baseUrl", baseUrl);
+            return SCRIPT_ENGINE.eval(jsStr, bindings);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
     }
 
     private AnalyzeRule getAnalyzeRule() {

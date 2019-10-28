@@ -12,6 +12,7 @@ import com.kunfei.bookshelf.bean.BookShelfBean;
 import com.kunfei.bookshelf.bean.BookmarkBean;
 import com.kunfei.bookshelf.bean.SearchBookBean;
 import com.kunfei.bookshelf.constant.AppConstant;
+import com.kunfei.bookshelf.constant.BookType;
 import com.kunfei.bookshelf.dao.BookChapterBeanDao;
 import com.kunfei.bookshelf.dao.BookInfoBeanDao;
 import com.kunfei.bookshelf.dao.BookShelfBeanDao;
@@ -250,6 +251,25 @@ public class BookshelfHelp {
         }
         return null;
     }
+
+    /**
+     * 获取书籍按name, author
+     */
+    public static BookShelfBean queryBookByName(String name, String author) {
+        BookInfoBean bookInfoBean = DbHelper.getInstance().getDaoSession().getBookInfoBeanDao().queryBuilder()
+                .where(BookInfoBeanDao.Properties.Name.eq(name), BookInfoBeanDao.Properties.Author.eq(author))
+                .unique();
+        if (bookInfoBean != null) {
+            BookShelfBean bookShelfBean = DbHelper.getInstance().getDaoSession().getBookShelfBeanDao().queryBuilder()
+                    .where(BookShelfBeanDao.Properties.NoteUrl.eq(bookInfoBean.getNoteUrl())).build().unique();
+            if(bookShelfBean != null) {
+                bookShelfBean.setBookInfoBean(bookInfoBean);
+            }
+            return bookShelfBean;
+        }
+        return null;
+    }
+
 
     public static List<BookInfoBean> searchBookInfo(String key) {
         return DbHelper.getDaoSession().getBookInfoBeanDao().queryBuilder()

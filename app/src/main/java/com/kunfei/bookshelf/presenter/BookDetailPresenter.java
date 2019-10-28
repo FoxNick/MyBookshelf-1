@@ -29,13 +29,10 @@ import com.kunfei.bookshelf.presenter.contract.BookDetailContract;
 import com.kunfei.bookshelf.utils.RxUtils;
 
 import java.util.List;
-import io.reactivex.Observer;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class BookDetailPresenter extends BasePresenterImpl<BookDetailContract.View> implements BookDetailContract.Presenter {
     public final static int FROM_BOOKSHELF = 1;

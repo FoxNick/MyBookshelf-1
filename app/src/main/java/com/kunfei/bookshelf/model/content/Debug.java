@@ -203,7 +203,7 @@ public class Debug {
 
                     @Override
                     public void onComplete() {
-                        finish();
+                            finish();
                     }
                 });
     }

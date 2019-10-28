@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.cardview.widget.CardView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -34,7 +35,8 @@ import com.kunfei.bookshelf.bean.BookShelfBean;
 import com.kunfei.bookshelf.bean.BookSourceBean;
 import com.kunfei.bookshelf.bean.SearchBookBean;
 import com.kunfei.bookshelf.constant.RxBusTag;
-import com.kunfei.bookshelf.help.BlurTransformation;
+import jp.wasabeef.glide.transformations.BlurTransformation;
+
 import com.kunfei.bookshelf.help.BookshelfHelp;
 import com.kunfei.bookshelf.help.ChapterContentHelp;
 import com.kunfei.bookshelf.model.BookSourceManager;
@@ -57,6 +59,8 @@ import static com.kunfei.bookshelf.presenter.BookDetailPresenter.FROM_BOOKSHELF;
 public class BookDetailActivity extends MBaseActivity<BookDetailContract.Presenter> implements BookDetailContract.View {
     @BindView(R.id.ifl_content)
     View vwContent;
+    @BindView(R.id.card_content)
+    CardView cardView;
     @BindView(R.id.iv_menu)
     ImageView ivMenu;
     @BindView(R.id.iv_blur_cover)
@@ -253,29 +257,35 @@ public class BookDetailActivity extends MBaseActivity<BookDetailContract.Present
         coverPath = path;
         if (coverPath.startsWith("http")) {
             Glide.with(this).load(coverPath)
-                    .dontAnimate().diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                    .centerCrop()
-                    .placeholder(R.drawable.img_cover_default)
-                    .into(ivCover);
+			    .apply(new RequestOptions().dontAnimate().centerCrop()
+                        .placeholder(R.drawable.img_cover_default)
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .error(R.drawable.img_cover_default)).into(ivCover);
             Glide.with(this).load(coverPath)
-                    .dontAnimate().diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                    .centerCrop()
-                    .placeholder(R.drawable.img_cover_gs)
-                    .apply(RequestOptions.bitmapTransform(new BlurTransformation(this, 25)))
-                    .into(ivBlurCover);
+			    .apply(new RequestOptions()
+                        .dontAnimate()
+                        .centerCrop()
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .placeholder(R.drawable.img_cover_gs)
+                        .error(R.drawable.img_cover_gs))
+                .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 3)))
+                .into(ivBlurCover);
         } else {
             File file = new File(coverPath);
             Glide.with(this).load(file)
-                    .dontAnimate().diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                    .centerCrop()
-                    .placeholder(R.drawable.img_cover_default)
-                    .into(ivCover);
+			    .apply(new RequestOptions().dontAnimate().centerCrop()
+                        .placeholder(R.drawable.img_cover_default)
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .error(R.drawable.img_cover_default)).into(ivCover);
             Glide.with(this).load(file)
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                    .centerCrop()
-                    .placeholder(R.drawable.img_cover_gs)
-                    .apply(RequestOptions.bitmapTransform(new BlurTransformation(this, 25)))
-                    .into(ivBlurCover);
+			    .apply(new RequestOptions()
+                        .dontAnimate()
+                        .centerCrop()
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .placeholder(R.drawable.img_cover_gs)
+                        .error(R.drawable.img_cover_gs))
+                .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 3)))
+                .into(ivBlurCover);
         }
     }
 
