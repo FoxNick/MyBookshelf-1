@@ -76,7 +76,7 @@ public class BookDetailPresenter extends BasePresenterImpl<BookDetailContract.Vi
             return;
         }
         searchBook = searchBookBean;
-        inBookShelf = searchBookBean.getIsCurrentSource();
+        inBookShelf = BookshelfHelp.isInBookShelf(searchBookBean.getNoteUrl());
         bookShelf = BookshelfHelp.getBookFromSearchBook(searchBookBean);
     }
 

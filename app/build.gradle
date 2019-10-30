@@ -13,32 +13,19 @@ def name = "YueDu"
 def version = "2." + releaseTime()
 //def gitCommits = Integer.parseInt("5307")
 def gitCommits = Integer.parseInt('git rev-list --count HEAD'.execute([], project.rootDir).text.trim())
-def RELEASE_STORE_FILE = ''
-def RELEASE_KEY_PASSWORD = ''
-def RELEASE_KEY_ALIAS = ''
-def RELEASE_STORE_PASSWORD = ''
 
-Properties properties = new Properties()
-// local.properties file in the root director
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
-def keystoreFilepath = properties.getProperty("keystore.path")
-
-if (keystoreFilepath) {
-    RELEASE_KEY_PASSWORD = properties.getProperty("keystore.password")
-    RELEASE_KEY_ALIAS = properties.getProperty("keystore.alias")
-    RELEASE_STORE_PASSWORD = properties.getProperty("keystore.alias_password")
-    RELEASE_STORE_FILE = file(keystoreFilepath)
-}
 			
 android {
     compileSdkVersion 28
     buildToolsVersion '28.0.3'
     signingConfigs {
         myConfig {
-            storeFile RELEASE_STORE_FILE
-            storePassword RELEASE_KEY_PASSWORD
-            keyAlias RELEASE_KEY_ALIAS
-            keyPassword RELEASE_STORE_PASSWORD
+            storeFile file('./key_app.keystore')
+            storePassword 'gs123654'
+            keyAlias 'key_app'
+            keyPassword 'gs123654'
+            v1SigningEnabled true
+            v2SigningEnabled true
         }
     }
 
