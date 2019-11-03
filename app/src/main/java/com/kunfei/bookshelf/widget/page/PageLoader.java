@@ -855,7 +855,7 @@ public abstract class PageLoader {
                         : (txtChapter.getPosition() + 1) + "/" + this.book.getChapterListSize() + "章";
             }else if (this.progressDisplay == 1) {
                 progress = (txtChapter.getStatus() != TxtChapter.Status.FINISH) ? ""
-                        : BookshelfHelp.getReadProgress(mCurChapterPos, book.getChapterListSize(), mCurPagePos, curChapter().txtChapter.getPageSize());
+                        : BookshelfHelp.getReadProgress(txtChapter.getPosition(), book.getChapterListSize(), mCurPagePos, curChapter().txtChapter.getPageSize());
             }
             float tipBottom;
             float tipLeft;
