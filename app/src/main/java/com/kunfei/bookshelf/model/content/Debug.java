@@ -9,11 +9,14 @@ import com.hwangjr.rxbus.RxBus;
 import com.kunfei.bookshelf.bean.BookChapterBean;
 import com.kunfei.bookshelf.bean.BookContentBean;
 import com.kunfei.bookshelf.bean.BookShelfBean;
+import com.kunfei.bookshelf.bean.BookSourceBean;
 import com.kunfei.bookshelf.bean.SearchBookBean;
 import com.kunfei.bookshelf.constant.RxBusTag;
 import com.kunfei.bookshelf.help.BookshelfHelp;
+import com.kunfei.bookshelf.model.BookSourceManager;
 import com.kunfei.bookshelf.model.UpLastChapterModel;
 import com.kunfei.bookshelf.model.WebBookModel;
+import com.kunfei.bookshelf.model.analyzeRule.AnalyzeRule;
 import com.kunfei.bookshelf.utils.NetworkUtils;
 import com.kunfei.bookshelf.utils.RxUtils;
 import com.kunfei.bookshelf.utils.StringUtils;
@@ -24,6 +27,8 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import static com.kunfei.bookshelf.constant.AppConstant.SCRIPT_ENGINE;
+import javax.script.SimpleBindings;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.CompositeDisposable;
@@ -34,6 +39,7 @@ public class Debug {
     @SuppressLint("ConstantLocale")
     private static final DateFormat DEBUG_TIME_FORMAT = new SimpleDateFormat("[mm:ss.SSS]", Locale.getDefault());
     private static long startTime;
+    private AnalyzeRule analyzeRule;
 
     private static String getDoTime() {
         return TimeUtils.millis2String(System.currentTimeMillis() - startTime, DEBUG_TIME_FORMAT);
@@ -86,15 +92,57 @@ public class Debug {
             bookShelfBean.setFinalDate(System.currentTimeMillis());
             bookInfoDebug(bookShelfBean);
         } else if (key.contains("::")) {
-            String url = key.substring(key.indexOf("::") + 2);
-            printLog(String.format("%s %s", getDoTime(), "⇒开始访问发现页:" + url));
-            findDebug(url);
+            int num = Integer.parseInt(key.substring(key.indexOf("::") + 2));
+
+            //printLog(String.format("%s %s", getDoTime(), "⇒开始访问发现页:" + url));
+            try {
+                BookSourceBean SY = BookSourceManager.getBookSourceByUrl(tag);
+                if (!TextUtils.isEmpty(SY.getRuleFindUrl())) {
+                    String findRule;
+                    boolean isJsAndCache = SY.getRuleFindUrl().startsWith("<js>");
+                    if (isJsAndCache) {
+                        String jsStr = SY.getRuleFindUrl().substring(4, SY.getRuleFindUrl().lastIndexOf("<"));
+                        findRule = evalJS(jsStr, SY.getBookSourceUrl()).toString();
+                    } else {
+                        findRule = SY.getRuleFindUrl();
+                    }
+                    String[] kindA = findRule.split("(&&|\n)+");
+                    String[] kind = kindA[num].split("::");
+                    printLog(String.format("%s %s", getDoTime(), "⇒开始访问发现页[" + kind[0] + "]:" + kind[1]));
+                    findDebug(kind[1]);
+                }else{
+                    printLog(String.format("%s %s", getDoTime(), "≡" + "无发现规则"));
+                    finish();
+                }
+            } catch (Exception exception) {
+                printLog(String.format("%s %s", getDoTime(), "≡" + "发现规则语法错误"));
+                finish();
+            }
+            //findDebug(url);
         } else {
             printLog(String.format("%s %s", getDoTime(), "⇒开始搜索关键字:" + key));
             searchDebug(key);
         }
     }
-
+    /**
+     * 执行JS
+     */
+    private Object evalJS(String jsStr, String baseUrl) {
+        try {
+            SimpleBindings bindings = new SimpleBindings();
+            bindings.put("java", getAnalyzeRule());
+            bindings.put("baseUrl", baseUrl);
+            return SCRIPT_ENGINE.eval(jsStr, bindings);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+    }
+    private AnalyzeRule getAnalyzeRule() {
+        if (analyzeRule == null) {
+            analyzeRule = new AnalyzeRule(null);
+        }
+        return analyzeRule;
+    }
     private void findDebug(String url) {
         printLog(String.format("\n%s ≡开始获取发现页", getDoTime()));
         WebBookModel.getInstance().findBook(url, 1, Debug.SOURCE_DEBUG_TAG)

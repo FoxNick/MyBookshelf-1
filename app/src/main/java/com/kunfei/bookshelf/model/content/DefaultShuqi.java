@@ -340,7 +340,7 @@ public class DefaultShuqi extends BaseModelImpl implements IStationBookModel {
                     String chapterId = ele.getAsJsonObject().get("chapterId").getAsString();
                     String chapterName = ele.getAsJsonObject().get("chapterName").getAsString();
                     BookChapterBean temp = new BookChapterBean();
-                    temp.setDurChapterUrl(noteUrl + "_" + chapterId + ".xml");   //id
+                    temp.setDurChapterUrl(noteUrl + "_" + chapterId + "_1_0.xml");   //id
                     temp.setDurChapterName(chapterName);
                     temp.setNoteUrl(noteUrl);
                     chapterBeans.add(temp);
