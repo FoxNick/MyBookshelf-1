@@ -508,9 +508,6 @@ public class ReadBookControl {
     }
 
     public int getCPM() {
-        if (CPM < 200) {
-            return 200;
-        }
         return CPM;
     }
 
