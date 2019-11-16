@@ -177,8 +177,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private boolean aloudNextPage;
     private int lastX, lastY;
 
-    private boolean disReSetPage = false;
-
     @Override
     protected ReadBookContract.Presenter initInjector() {
         return new ReadBookPresenter();
@@ -1657,6 +1655,12 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 }
                 return true;
             } else if (flMenu.getVisibility() != View.VISIBLE) {
+                if (keyCode == preferences.getInt("pageKeyCode", 0)) {
+                    if (mPageLoader != null) {
+                        mPageLoader.skipToNextPage();
+                    }
+                    return true;
+                }
                 if (readBookControl.getCanKeyTurn(aloudStatus == ReadAloudService.Status.PLAY) && keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
                     if (mPageLoader != null) {
                         mPageLoader.skipToNextPage();
@@ -1680,7 +1684,9 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (flMenu.getVisibility() != View.VISIBLE) {
             if (readBookControl.getCanKeyTurn(aloudStatus == ReadAloudService.Status.PLAY)
-                    && (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP)) {
+                    && (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN
+                    || keyCode == KeyEvent.KEYCODE_VOLUME_UP
+                    || keyCode == preferences.getInt("pageKeyCode", 0))) {
                 return true;
             }
         }
