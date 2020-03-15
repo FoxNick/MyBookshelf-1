@@ -10,6 +10,8 @@ import com.kunfei.bookshelf.bean.BaseBookBean;
 import com.kunfei.bookshelf.utils.NetworkUtils;
 import com.kunfei.bookshelf.utils.StringUtils;
 
+import org.jsoup.nodes.Entities;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -248,9 +250,13 @@ public class AnalyzeRule {
         }
         if (result == null) return "";
         if (isUrl && !StringUtils.isTrimEmpty(baseUrl)) {
-            return NetworkUtils.getAbsoluteURL(baseUrl, String.valueOf(result));
+            return NetworkUtils.getAbsoluteURL(baseUrl, Entities.unescape(String.valueOf(result)));
         }
-        return String.valueOf(result);
+        try {
+            return Entities.unescape(String.valueOf(result));
+        } catch (Exception e) {
+            return String.valueOf(result);
+        }
     }
 
     /**

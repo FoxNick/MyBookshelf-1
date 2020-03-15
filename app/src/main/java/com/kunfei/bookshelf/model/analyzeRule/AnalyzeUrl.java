@@ -264,6 +264,10 @@ public class AnalyzeUrl {
         }
     }
 
+    public String getCharCode() {
+        return charCode;
+    }
+
     public String getHost() {
         return host;
     }

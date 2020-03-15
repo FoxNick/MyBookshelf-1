@@ -117,7 +117,12 @@ class BookContent {
 
         analyzer.setContent(s, NetworkUtils.getAbsoluteURL(baseUrl, chapterUrl));
         Debug.printLog(tag, 1, "┌解析正文内容");
-        webContentBean.content = StringUtils.formatHtml(analyzer.getString(ruleBookContent));
+        if (ruleBookContent.equals("all") || ruleBookContent.contains("@all")) {
+            webContentBean.content = analyzer.getString(ruleBookContent);
+        }
+        else {
+            webContentBean.content = StringUtils.formatHtml(analyzer.getString(ruleBookContent));
+        }
         if (webContentBean.content != null && webContentBean.content.length() > 4000) {
             Debug.printLog(tag, 1, "└" + webContentBean.content.substring(0, 4000) + "···");
         } else {

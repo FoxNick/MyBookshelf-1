@@ -279,6 +279,14 @@ public class BookShelfBean implements Cloneable, BaseBookBean {
         return this.customCoverPath;
     }
 
+    public String getCoverPath() {
+        if (TextUtils.isEmpty(customCoverPath)) {
+            return bookInfoBean.getCoverUrl();
+        } else {
+            return this.customCoverPath;
+        }
+    }
+
     public void setCustomCoverPath(String customCoverPath) {
         this.customCoverPath = customCoverPath;
     }
@@ -305,6 +313,14 @@ public class BookShelfBean implements Cloneable, BaseBookBean {
 
     public Boolean getReplaceEnable() {
         return replaceEnable == null ? MApplication.getConfigPreferences().getBoolean("replaceEnableDefault", true) : replaceEnable;
+    }
+
+    public String getName() {
+        return bookInfoBean.getName();
+    }
+
+    public String getAuthor() {
+        return bookInfoBean.getAuthor();
     }
 
     public void setReplaceEnable(Boolean replaceEnable) {

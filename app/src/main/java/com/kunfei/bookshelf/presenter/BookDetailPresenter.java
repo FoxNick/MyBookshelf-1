@@ -55,10 +55,11 @@ public class BookDetailPresenter extends BasePresenterImpl<BookDetailContract.Vi
                 String noteUrl = intent.getStringExtra("noteUrl");
                 if (!TextUtils.isEmpty(noteUrl)) {
                     bookShelf = BookshelfHelp.getBook(noteUrl);
-                } else {
-                    mView.finish();
-                    return;
                 }
+            }
+            if (bookShelf == null) {
+                mView.finish();
+                return;
             }
             inBookShelf = true;
             searchBook = new SearchBookBean();
@@ -107,6 +108,7 @@ public class BookDetailPresenter extends BasePresenterImpl<BookDetailContract.Vi
 
     @Override
     public void getBookShelfInfo() {
+        if (bookShelf == null) return;
         if (BookShelfBean.LOCAL_TAG.equals(bookShelf.getTag())) return;
         WebBookModel.getInstance().getBookInfo(bookShelf)
                 .flatMap(bookShelfBean -> WebBookModel.getInstance().getChapterList(bookShelfBean))

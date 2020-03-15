@@ -32,7 +32,6 @@
     <string name="net_error_10001">没有网络</string>
     <string name="net_error_10002">网络连接超时</string>
     <string name="net_error_10003">数据解析失败</string>
-    <string name="author_format">作者: %s</string>
     <string name="origin_format">来源: %s</string>
     <string name="read_dur_progress">最近: %s</string>
     <string name="book_name">书名</string>
@@ -45,6 +44,9 @@
     <string name="web_service">web服务</string>
     <string name="web_edit_source">web编辑书源</string>
     <string name="http_ip">http://%s:%d</string>
+    <string name="web_service_starting_hint_short">正在启动服务</string>
+    <string name="web_service_starting_hint_long">正在启动服务\n具体信息查看通知栏</string>
+    <string name="web_service_already_started_hint">服务已启动</string>
     <string name="download_offline">离线下载</string>
     <string name="download_offline_t">离线下载</string>
     <string name="download_offline_s">下载选择的章节到本地</string>
@@ -98,6 +100,10 @@
     <string name="set_timer">定时</string>
     <string name="read_aloud_pause">朗读暂停</string>
     <string name="read_aloud_timer">正在朗读(还剩%d分钟)</string>
+    <string name="read_aloud_timerlong">"正在朗读(还剩%d小时%d分)"</string>
+    <string name="read_aloud_timerremaining">%d分钟</string>
+    <string name="read_aloud_timerremaininglong">"%d小时%d分"</string>
+    <string name="read_aloud_timerstop">"计时已取消"</string>
     <string name="ps_hide_navigation_bar">阅读界面隐藏虚拟按键</string>
     <string name="pt_hide_navigation_bar">隐藏导航栏</string>
     <string name="re_navigation_bar_color">导航栏颜色</string>
@@ -105,6 +111,7 @@
     <string name="scoring">评分</string>
     <string name="send_mail">发送邮件</string>
     <string name="can_not_open">无法打开</string>
+    <string name="can_not_share">分享失败</string>
     <string name="no_chapter">无章节</string>
     <string name="add_url">添加网址</string>
     <string name="add_book_url">添加书籍网址</string>
@@ -232,10 +239,6 @@
     <string name="progress_show">进度 %d/%d</string>
     <string name="tts_fix">请安装并选择中文TTS!</string>
     <string name="tts_init_failed">TTS初始化失败!</string>
-    <string name="jd_convert">进度显示</string>
-    <string name="jd_convert_o">不显示进度</string>
-    <string name="jd_convert_z">显示章节</string>
-    <string name="jd_convert_b">显示百分比</string>
     <string name="jf_convert">简繁转换</string>
     <string name="jf_convert_o">关闭</string>
     <string name="jf_convert_f">简转繁</string>
@@ -246,7 +249,7 @@
     <string name="nb_file_add_shelf">加入书架</string>
     <string name="nb_file_add_shelves">加入书架(%1$d)</string>
     <string name="nb_file_add_succeed">成功添加%1$d本书</string>
-    <string name="fonts_folder">请将字体文件放到SD根目录YueDu/Fonts文件夹下重新选择</string>
+    <string name="fonts_folder">请将字体文件放到SD根目录Fonts文件夹下重新选择</string>
     <string name="default_font">默认字体</string>
     <string name="select_font">选择字体</string>
     <string name="text_size">字号</string>
@@ -267,6 +270,7 @@
     <string name="pt_default_read">自动跳转最近阅读</string>
     <string name="use_to">替换范围，选填书名或者源名</string>
     <string name="menu_action_group">分组</string>
+    <string name="backup_path">备份路径</string>
     <string name="download_path">内容缓存路径</string>
     <string name="sys_file_picker">系统文件选择器</string>
     <string name="new_version">新版本</string>
@@ -334,22 +338,22 @@
     <string name="rule_content_url">章节URL规则(ruleContentUrl)</string>
     <string name="rule_cover_url">封面规则(ruleCoverUrl)</string>
     <string name="rule_introduce">简介规则(ruleIntroduce)</string>
-    <string name="rule_search_author">作者规则(ruleSearchAuthor)</string>
-    <string name="rule_find_author">作者规则(ruleFindAuthor)</string>
-    <string name="rule_search_cover_url">封面规则(ruleSearchCoverUrl)</string>
-    <string name="rule_find_cover_url">封面规则(ruleFindCoverUrl)</string>
-    <string name="rule_search_kind">分类规则(ruleSearchKind)</string>
-    <string name="rule_find_kind">分类规则(ruleFindKind)</string>
-    <string name="rule_search_last_chapter">最新章节规则(ruleSearchLastChapter)</string>
-    <string name="rule_find_last_chapter">最新章节规则(ruleFindLastChapter)</string>
-    <string name="rule_search_list">书籍列表规则(ruleSearchList)</string>
-    <string name="rule_find_list">书籍列表规则(ruleFindList)</string>
-    <string name="rule_search_name">书名规则(ruleSearchName)</string>
-    <string name="rule_find_name">书名规则(ruleFindName)</string>
-    <string name="rule_search_note_url">书籍URL规则(ruleSearchNoteUrl)</string>
-    <string name="rule_find_note_url">书籍URL规则(ruleFindNoteUrl)</string>
-    <string name="rule_search_introduce">简介规则(ruleSearchIntroduce)</string>
-    <string name="rule_find_introduce">简介规则(ruleFindIntroduce)</string>
+    <string name="rule_search_author">搜索作者规则(ruleSearchAuthor)</string>
+    <string name="rule_find_author">发现作者规则(ruleFindAuthor)</string>
+    <string name="rule_search_cover_url">搜索封面规则(ruleSearchCoverUrl)</string>
+    <string name="rule_find_cover_url">发现封面规则(ruleFindCoverUrl)</string>
+    <string name="rule_search_kind">搜索分类规则(ruleSearchKind)</string>
+    <string name="rule_find_kind">发现分类规则(ruleFindKind)</string>
+    <string name="rule_search_last_chapter">搜索最新章节规则(ruleSearchLastChapter)</string>
+    <string name="rule_find_last_chapter">发现最新章节规则(ruleFindLastChapter)</string>
+    <string name="rule_search_list">搜索列表规则(ruleSearchList)</string>
+    <string name="rule_find_list">发现列表规则(ruleFindList)</string>
+    <string name="rule_search_name">搜索书名规则(ruleSearchName)</string>
+    <string name="rule_find_name">发现书名规则(ruleFindName)</string>
+    <string name="rule_search_note_url">搜索书籍URL规则(ruleSearchNoteUrl)</string>
+    <string name="rule_find_note_url">发现书籍URL规则(ruleFindNoteUrl)</string>
+    <string name="rule_search_introduce">搜索简介规则(ruleSearchIntroduce)</string>
+    <string name="rule_find_introduce">发现简介规则(ruleFindIntroduce)</string>
     <string name="rule_search_url">搜索地址(ruleSearchUrl)</string>
     <string name="rule_find_url">发现规则(ruleFindUrl)</string>
     <string name="rule_content_url_next">正文下一页URL规则(ruleContentUrlNext)</string>
@@ -357,8 +361,7 @@
     <string name="rule_book_info_init">书籍详情预处理规则(ruleBookInfoInit)</string>
     <string name="rule_book_kind">分类规则(ruleBookKind)</string>
     <string name="rule_book_last_chapter">最新章节规则(ruleBookLastChapter)</string>
-    <string name="source_user_agent">浏览器UA(HttpUserAgent)</string>
-    <string name="source_http_header">请求头(header)</string>
+    <string name="source_user_agent">HttpUserAgent</string>
     <string name="debug_source">调试书源</string>
     <string name="import_by_qr_code">二维码导入</string>
     <string name="scan_qr_code">扫描二维码</string>
@@ -416,6 +419,7 @@
     <string name="indent_2">二字符缩进</string>
     <string name="indent_3">三字符缩进</string>
     <string name="indent_4">四字符缩进</string>
+    <string name="select_folder">选择文件夹</string>
     <string name="select_sd_file">选择SD卡</string>
     <string name="no_find">没有发现，可以在书源里添加。</string>
     <string name="restore_default">恢复默认</string>
@@ -428,13 +432,17 @@
     <string name="content_padding">正文边距</string>
     <string name="tip_padding">Tip边距</string>
     <string name="text_letter_spacing">字距</string>
-
+    <string name="default_path">默认路径</string>
+    <string name="sys_folder_picker">系统文件夹选择器</string>
+    <string name="app_folder_picker">自带选择器\n(Android10以上因权限限制可能无法使用)</string>
+    <string name="a10_permission_toast">Android10以上因权限限制可能无法读写文件</string>
     <string name="e_ink_mode">E-Ink 模式</string>
     <string name="e_ink_mode_detail">去除动画,优化电纸书使用体验</string>
     <string name="web_menu">Web服务</string>
     <string name="web_port_title">web端口</string>
     <string name="web_port_summary">当前端口 %s</string>
     <string name="qr_share">二维码分享</string>
+    <string name="str_share">字符串分享</string>
     <string name="wifi_share">wifi分享</string>
     <string name="please_grant_storage_permission">请给于存储权限</string>
     <string name="skip_previous">上一个</string>
@@ -449,18 +457,16 @@
     <string name="change_icon_summary">切换软件显示在桌面的图标</string>
     <string name="show_enabled">显示勾选</string>
     <string name="to_lh">扩展到刘海</string>
-    <string name="look_more"><![CDATA[查看更多>]]></string>
+
     <string name="layout_list">列表视图</string>
     <string name="layout_grid3">网格视图三列</string>
     <string name="layout_grid4">网格视图四列</string>
     <string name="cover_change_source">封面换源</string>
     <string name="select_local_image">选择本地图片</string>
     <string name="refresh_cover">刷新封面</string>
- 	<string name="c_page_key">自定义翻页按键</string>
-   <string name="source_tab_base">基本</string>
-    <string name="source_tab_search">搜索</string>
-    <string name="source_tab_find">发现</string>
-    <string name="source_tab_info">详情</string>
-    <string name="source_tab_toc">目录</string>
-    <string name="source_tab_content">内容</string>
+    <string name="c_page_key">自定义翻页按键</string>
+
+    <string name="custom_page_key">自定义翻页按键</string>
+    <string name="prev_page_key">上一页按键</string>
+    <string name="next_page_key">下一页按键</string>
 </resources>

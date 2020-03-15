@@ -554,6 +554,17 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
         }
     }
 
+    private void shareText(String title, String text) {
+        try {
+            Intent textIntent = new Intent(Intent.ACTION_SEND);
+            textIntent.setType("text/plain");
+            textIntent.putExtra(Intent.EXTRA_TEXT, text);
+            startActivity(Intent.createChooser(textIntent, title));
+        } catch (Exception e) {
+            toast(R.string.can_not_share, ERROR);
+        }
+    }
+
     //设置ToolBar
     private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
@@ -615,6 +626,9 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
                 break;
             case R.id.action_share_it:
                 handleSourceShare();
+                break;
+            case R.id.action_share_str:
+                shareText("Source Share", getBookSourceStr(true));
                 break;
             case R.id.action_share_wifi:
                 ShareService.startThis(this, Collections.singletonList(getBookSource(true)));

@@ -194,6 +194,7 @@ public abstract class MBaseActivity<T extends IPresenter> extends BaseActivity<T
     /**
      * 设置屏幕方向
      */
+    @SuppressLint("SourceLockedOrientationActivity")
     public void setOrientation(int screenDirection) {
         switch (screenDirection) {
             case 0:

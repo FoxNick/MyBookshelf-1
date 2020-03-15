@@ -58,13 +58,6 @@
                 android:resource="@xml/shortcuts" />
         </activity>
         <activity
-            android:name=".view.activity.WelcomeToReadActivity"
-            android:theme="@style/CAppWelcomeTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".view.activity.ReadBookActivity"
             android:configChanges="locale|keyboardHidden"
             android:launchMode="singleTask"
@@ -99,8 +92,7 @@
         <activity
             android:name=".view.activity.QRCodeScanActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:launchMode="singleTask" />
         <activity
             android:name=".view.activity.MainActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
@@ -167,10 +159,6 @@
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".view.activity.UpdateActivity"
-            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
-            android:launchMode="singleTask" />
         <activity
             android:name=".view.activity.ChapterListActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"

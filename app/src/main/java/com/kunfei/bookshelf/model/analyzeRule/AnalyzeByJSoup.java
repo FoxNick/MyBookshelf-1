@@ -406,9 +406,12 @@ public class AnalyzeByJSoup {
                     textS.add(TextUtils.join("\n", cText));
                     break;
                 case "html":
-                    elements.select("script").remove();
+                    elements.select("script, style").remove();
                     String html = elements.html();
                     textS.add(html);
+                    break;
+                case "all":
+                    textS.add(elements.outerHtml());
                     break;
                 default:
                     for (Element element : elements) {

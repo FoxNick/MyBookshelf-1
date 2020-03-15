@@ -13,7 +13,6 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.kunfei.bookshelf.DbHelper;
 import com.kunfei.bookshelf.R;
 import com.kunfei.bookshelf.bean.BookKindBean;
@@ -21,7 +20,7 @@ import com.kunfei.bookshelf.bean.SearchBookBean;
 import com.kunfei.bookshelf.utils.StringUtils;
 import com.kunfei.bookshelf.utils.theme.ThemeStore;
 import com.kunfei.bookshelf.view.adapter.base.BaseListAdapter;
-import com.kunfei.bookshelf.widget.CoverImageView;
+import com.kunfei.bookshelf.widget.image.CoverImageView;
 import com.kunfei.bookshelf.widget.recycler.refresh.RefreshRecyclerViewAdapter;
 
 import java.lang.ref.WeakReference;
@@ -57,17 +56,12 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
             if (itemClickListener != null)
                 itemClickListener.onItemClick(v, position);
         });
+        SearchBookBean book = searchBooks.get(position);
         if (!activity.isFinishing()) {
-            Glide.with(activity)
-                    .load(searchBooks.get(position).getCoverUrl())
-                    .dontAnimate()
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                    .centerCrop()
-                    .placeholder(R.drawable.img_cover_default)
-                    .into(myViewHolder.ivCover);
+            myViewHolder.ivCover.load(book.getCoverUrl(), book.getName(), book.getAuthor());
         }
-        myViewHolder.tvName.setText(searchBooks.get(position).getName());
-        BookKindBean bookKindBean = new BookKindBean(searchBooks.get(position).getKind());
+        myViewHolder.tvName.setText(String.format("%s (%s)", book.getName(), book.getAuthor()));
+        BookKindBean bookKindBean = new BookKindBean(book.getKind());
         if (isTrimEmpty(bookKindBean.getKind())) {
             myViewHolder.tvKind.setVisibility(View.GONE);
         } else {
@@ -86,33 +80,28 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
             myViewHolder.tvState.setVisibility(View.VISIBLE);
             myViewHolder.tvState.setText(bookKindBean.getState());
         }
-        //作者
-        if (isTrimEmpty(searchBooks.get(position).getAuthor())) {
-            //myViewHolder.tvauthor.setVisibility(View.GONE);
-        } else {
-            //myViewHolder.tvauthor.setVisibility(View.VISIBLE);
-            myViewHolder.tvauthor.setText(activity.getString(R.string.author_format, searchBooks.get(position).getAuthor()));
-        }
         //来源
-        if (isTrimEmpty(searchBooks.get(position).getOrigin())) {
-            //myViewHolder.tvOrigin.setVisibility(View.GONE);
+        if (isTrimEmpty(book.getOrigin())) {
+            myViewHolder.tvOrigin.setVisibility(View.GONE);
         } else {
-            //myViewHolder.tvOrigin.setVisibility(View.VISIBLE);
-            myViewHolder.tvOrigin.setText(activity.getString(R.string.origin_format, searchBooks.get(position).getOrigin()));
+            myViewHolder.tvOrigin.setVisibility(View.VISIBLE);
+            myViewHolder.tvOrigin.setText(activity.getString(R.string.origin_format, book.getOrigin()));
         }
-        //最新章节/简介
-        final String lastChapter = searchBooks.get(position).getLastChapter();
-        String desc = !StringUtils.isBlank(lastChapter) ? lastChapter
-                : !StringUtils.isBlank(searchBooks.get(position).getIntroduce()) ? searchBooks.get(position).getIntroduce() : "";
-        if (isTrimEmpty(StringUtils.trim(desc))) {
-            //myViewHolder.tvLasted.setVisibility(View.GONE);
+        //最新章节
+        if (isTrimEmpty(book.getLastChapter())) {
+            myViewHolder.tvLasted.setVisibility(View.GONE);
         } else {
-            myViewHolder.tvLasted.setText(StringUtils.trim(desc));
-            //myViewHolder.tvLasted.setVisibility(View.VISIBLE);
+            myViewHolder.tvLasted.setText(book.getLastChapter());
+            myViewHolder.tvLasted.setVisibility(View.VISIBLE);
         }
-
-
-        myViewHolder.tvOriginNum.setText(String.format("共%d个源", searchBooks.get(position).getOriginNum()));
+        //简介
+        if (isTrimEmpty(book.getIntroduce())) {
+            myViewHolder.tvIntroduce.setVisibility(View.GONE);
+        } else {
+            myViewHolder.tvIntroduce.setText(StringUtils.formatHtml(book.getIntroduce()));
+            myViewHolder.tvIntroduce.setVisibility(View.VISIBLE);
+        }
+        myViewHolder.tvOriginNum.setText(String.format("共%d个源", book.getOriginNum()));
     }
 
     @Override
@@ -221,7 +210,7 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
         TextView tvLasted;
         TextView tvOrigin;
         TextView tvOriginNum;
-        TextView tvauthor;
+        TextView tvIntroduce;
 
         MyViewHolder(View itemView) {
             super(itemView);
@@ -234,7 +223,7 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
             tvKind = itemView.findViewById(R.id.tv_kind);
             tvOrigin = itemView.findViewById(R.id.tv_origin);
             tvOriginNum = itemView.findViewById(R.id.tv_origin_num);
-            tvauthor = itemView.findViewById(R.id.tv_author);
+            tvIntroduce = itemView.findViewById(R.id.tv_introduce);
         }
     }
 
