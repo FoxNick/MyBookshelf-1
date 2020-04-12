@@ -8,6 +8,7 @@ import com.kunfei.bookshelf.bean.BookShelfBean;
 import com.kunfei.bookshelf.bean.BookSourceBean;
 import com.kunfei.bookshelf.model.content.Debug;
 import com.kunfei.bookshelf.utils.NetworkUtils;
+import com.kunfei.bookshelf.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,29 +83,29 @@ public class AnalyzeByRegex {
                 ruleVal.put(ruleName.get(i), hasVarParams.get(i) ? AnalyzeByRegex.checkKeys(infoVal.toString(), analyzer) : infoVal.toString());
             }
             // 保存详情信息
-            if (!isEmpty(ruleVal.get("BookName"))) bookInfoBean.setName(ruleVal.get("BookName"));
-            if (!isEmpty(ruleVal.get("BookAuthor"))) bookInfoBean.setAuthor(ruleVal.get("BookAuthor"));
-            if (!isEmpty(ruleVal.get("BookKind"))) bookInfoBean.setKind(ruleVal.get("BookKind"));
+            if (!isEmpty(ruleVal.get("BookName")))
+                bookInfoBean.setName(StringUtils.formatHtml(ruleVal.get("BookName")));
+            if (!isEmpty(ruleVal.get("BookAuthor")))
+                bookInfoBean.setAuthor(StringUtils.formatHtml(ruleVal.get("BookAuthor")));
             if (!isEmpty(ruleVal.get("LastChapter"))) bookShelfBean.setLastChapterName(ruleVal.get("LastChapter"));
-            if (!isEmpty(ruleVal.get("Introduce"))) bookInfoBean.setIntroduce(ruleVal.get("Introduce"));
+            if (!isEmpty(ruleVal.get("Introduce")))
+                bookInfoBean.setIntroduce(StringUtils.formatHtml(ruleVal.get("Introduce")));
             if (!isEmpty(ruleVal.get("CoverUrl"))) bookInfoBean.setCoverUrl(ruleVal.get("CoverUrl"));
             if (!isEmpty(ruleVal.get("ChapterUrl"))) bookInfoBean.setChapterUrl(NetworkUtils.getAbsoluteURL(baseUrl, ruleVal.get("ChapterUrl")));
             else bookInfoBean.setChapterUrl(baseUrl);
             //如果目录页和详情页相同,暂存页面内容供获取目录用
             if (bookInfoBean.getChapterUrl().equals(baseUrl)) bookInfoBean.setChapterListHtml(res);
             // 输出调试信息
-            Debug.printLog(tag, "└详情正则预处理完成");
-            Debug.printLog(tag, "┌获取书名");
+            Debug.printLog(tag, "└详情预处理完成");
+            Debug.printLog(tag, "┌获取书籍名称");
             Debug.printLog(tag, "└" + bookInfoBean.getName());
-            Debug.printLog(tag, "┌获取作者");
+            Debug.printLog(tag, "┌获取作者名称");
             Debug.printLog(tag, "└" + bookInfoBean.getAuthor());
-            Debug.printLog(tag, "┌获取分类");
-            Debug.printLog(tag, "└" + bookInfoBean.getKind());
             Debug.printLog(tag, "┌获取最新章节");
             Debug.printLog(tag, "└" + bookShelfBean.getLastChapterName());
-            Debug.printLog(tag, "┌获取简介");
-            Debug.printLog(tag, "└" + bookInfoBean.getIntroduce());
-            Debug.printLog(tag, "┌获取封面");
+            Debug.printLog(tag, "┌获取简介内容");
+            Debug.printLog(tag, 1, "└" + bookInfoBean.getIntroduce(), true, true);
+            Debug.printLog(tag, "┌获取封面网址");
             Debug.printLog(tag, "└" + bookInfoBean.getCoverUrl());
             Debug.printLog(tag, "┌获取目录网址");
             Debug.printLog(tag, "└" + bookInfoBean.getChapterUrl());

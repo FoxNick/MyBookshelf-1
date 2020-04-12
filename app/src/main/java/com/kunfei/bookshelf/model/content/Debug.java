@@ -49,7 +49,7 @@ public class Debug {
         printLog(tag, 1, msg, true);
     }
 
-    public static void printLog(String tag, int state, String msg) {
+    static void printLog(String tag, int state, String msg) {
         printLog(tag, state, msg, true);
     }
 
@@ -57,7 +57,7 @@ public class Debug {
         printLog(tag, state, msg, print, false);
     }
 
-    static void printLog(String tag, int state, String msg, boolean print, boolean formatHtml) {
+    public static void printLog(String tag, int state, String msg, boolean print, boolean formatHtml) {
         if (print && Objects.equals(SOURCE_DEBUG_TAG, tag)) {
             if (formatHtml) {
                 msg = StringUtils.formatHtml(msg);
