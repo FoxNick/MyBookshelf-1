@@ -4,6 +4,7 @@ import android.os.Environment;
 
 import com.kunfei.bookshelf.MApplication;
 import com.kunfei.bookshelf.utils.IOUtils;
+import io.github.pixee.security.BoundedLineReader;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -128,7 +129,7 @@ public class FileHelp {
         try {
             reader = new FileReader(file);
             BufferedReader br = new BufferedReader(reader);
-            while ((str = br.readLine()) != null) {
+            while ((str = BoundedLineReader.readLine(br, 5_000_000)) != null) {
                 //过滤空语句
                 if (!str.equals("")) {
                     //由于sb会自动过滤\n,所以需要加上去
