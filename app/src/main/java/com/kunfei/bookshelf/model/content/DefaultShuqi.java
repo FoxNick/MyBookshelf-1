@@ -31,6 +31,8 @@ import com.kunfei.bookshelf.model.impl.IStationBookModel;
 import com.kunfei.bookshelf.utils.MD5Utils;
 import com.kunfei.bookshelf.utils.NetworkUtils;
 import com.kunfei.bookshelf.utils.StringUtils;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 
 
 import java.net.MalformedURLException;
@@ -56,7 +58,7 @@ public class DefaultShuqi extends BaseModelImpl implements IStationBookModel {
     private DefaultShuqi(String tag){
         this.tag = tag;
         try {
-            URL url = new URL(tag);
+            URL url = Urls.create(tag, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
             name = url.getHost();
         } catch (MalformedURLException e) {
             name = tag;
