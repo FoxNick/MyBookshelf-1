@@ -29,6 +29,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import java.security.SecureRandom;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -136,7 +137,7 @@ public class ExplosionField extends View {
         ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f).setDuration(150);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
-            Random random = new Random();
+            Random random = new SecureRandom();
 
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
