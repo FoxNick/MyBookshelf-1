@@ -18,6 +18,7 @@ import com.kunfei.bookshelf.dao.BookInfoBeanDao;
 import com.kunfei.bookshelf.dao.BookShelfBeanDao;
 import com.kunfei.bookshelf.dao.BookmarkBeanDao;
 import com.kunfei.bookshelf.utils.StringUtils;
+import java.nio.file.Files;
 
 import net.ricecode.similarity.JaroWinklerStrategy;
 import net.ricecode.similarity.StringSimilarityService;
@@ -110,7 +111,7 @@ public class BookshelfHelp {
         }
         File file = getBookFile(folderName, index, fileName);
         //获取流并存储
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+        try (BufferedWriter writer = Files.newBufferedWriter(file.toPath())) {
             writer.write(fileName + "\n\n");
             writer.write(content);
             writer.write("\n\n");
