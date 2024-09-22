@@ -15,6 +15,7 @@ import com.kunfei.bookshelf.widget.filepicker.entity.FileItem;
 import com.kunfei.bookshelf.widget.filepicker.icons.FilePickerIcon;
 import com.kunfei.bookshelf.widget.filepicker.util.ConvertUtils;
 import com.kunfei.bookshelf.widget.filepicker.util.FileUtils;
+import io.github.pixee.security.Filenames;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -211,7 +212,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.MyViewHolder> 
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         FileItem fileItem = data.get(position);
         holder.imageView.setImageDrawable(fileItem.getIcon());
-        holder.textView.setText(fileItem.getName());
+        holder.textView.setText(Filenames.toSimpleFileName(fileItem.getName()));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
