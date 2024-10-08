@@ -16,6 +16,8 @@ import com.kunfei.bookshelf.utils.GsonUtils;
 import com.kunfei.bookshelf.utils.NetworkUtils;
 import com.kunfei.bookshelf.utils.RxUtils;
 import com.kunfei.bookshelf.utils.StringUtils;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -220,7 +222,7 @@ public class BookSourceManager {
                                     .buildDelete().executeDeleteWithoutDetachingEntities();
                         } else {
                             try {
-                                new URL(bookSourceBean.getBookSourceUrl());
+                                Urls.create(bookSourceBean.getBookSourceUrl(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
                                 bookSourceBean.setSerialNumber(0);
                                 addBookSource(bookSourceBean);
                             } catch (Exception exception) {
