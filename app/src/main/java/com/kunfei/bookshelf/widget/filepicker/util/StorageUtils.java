@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 /**
  * 存储设备工具类
@@ -152,7 +153,7 @@ public final class StorageUtils {
      */
     public static String getTempFilePath(Context context) {
         try {
-            return File.createTempFile("lyj_", ".tmp", context.getCacheDir()).getAbsolutePath();
+            return Files.createTempFile(context.getCacheDir().toPath(), "lyj_", ".tmp").toFile().getAbsolutePath();
         } catch (IOException e) {
             return getTempDirPath(context) + "lyj.tmp";
         }
