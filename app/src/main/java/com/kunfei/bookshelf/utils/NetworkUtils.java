@@ -9,6 +9,8 @@ import android.text.TextUtils;
 
 import com.kunfei.bookshelf.MApplication;
 import com.kunfei.bookshelf.R;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -72,8 +74,8 @@ public class NetworkUtils {
             relativePath = relativePath.substring(header.length());
         }
         try {
-            URL absoluteUrl = new URL(baseURL);
-            URL parseUrl = new URL(absoluteUrl, relativePath);
+            URL absoluteUrl = Urls.create(baseURL, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
+            URL parseUrl = Urls.create(absoluteUrl, relativePath, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
             relativePath = parseUrl.toString();
             if (header != null) {
                 relativePath = header + relativePath;
@@ -93,7 +95,7 @@ public class NetworkUtils {
             relativePath = relativePath.substring(header.length());
         }
         try {
-            URL parseUrl = new URL(baseURL, relativePath);
+            URL parseUrl = Urls.create(baseURL, relativePath, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
             relativePath = parseUrl.toString();
             if (header != null) {
                 relativePath = header + relativePath;
